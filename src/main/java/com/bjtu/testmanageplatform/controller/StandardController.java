@@ -1,6 +1,8 @@
 package com.bjtu.testmanageplatform.controller;
 
 import com.bjtu.testmanageplatform.beans.CreateStandardReq;
+import com.bjtu.testmanageplatform.beans.StandardListReq;
+import com.bjtu.testmanageplatform.beans.StandardListResponse;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.service.StandardService;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: gaofeng
@@ -31,6 +35,14 @@ public class StandardController {
         this.standardService = standardService;
     }
 
+    /**
+     * 插入一条标准库记录
+     *
+     * @param request
+     * @param createStandardReq
+     *
+     * @return
+     */
     @RequestMapping(value = "/add")
     public JResponse create(HttpServletRequest request,
                             @Valid @RequestBody CreateStandardReq createStandardReq) {
@@ -60,5 +72,68 @@ public class StandardController {
             jResponse.setErr_msg("db insert error");
         }
         return jResponse;
+    }
+
+
+    /**
+     * 查找指定标准库记录列表
+     *
+     * @param request
+     * @param standardListReq
+     *
+     * @return
+     */
+    @RequestMapping(value = "/list")
+    public StandardListResponse list(HttpServletRequest request,
+                                     @RequestBody @Valid StandardListReq standardListReq) {
+        StandardListReq.StandardListData standardListData = standardListReq.getData();
+        log.info("standard list standardRank={} headline_rank={} secondary_headline_rank={}",
+                standardListData.getStandard_rank(), standardListData.getHeadline_rank(),
+                standardListData.getSecondary_headline_rank());
+        StandardListResponse standardListResponse = new StandardListResponse();
+
+        // 判断传来的传来的顺序是否合规
+        if (standardListData.getStandard_rank() < 1 || standardListData.getStandard_rank() > 3) {
+            standardListResponse.setErr_no(101180042);
+            standardListResponse.setErr_msg("standard_rank should between 1, 3");
+            return standardListResponse;
+        } else if (standardListData.getStandard_rank().equals(1) &&
+                (!standardListData.getHeadline_rank().equals(0) ||
+                        !standardListData.getSecondary_headline_rank().equals(0))) {
+            standardListResponse.setErr_no(101180043);
+            standardListResponse.setErr_msg("headline_rank can't be 0 or secondary_headline_rank " +
+                    "should be 0");
+            return standardListResponse;
+        } else if (standardListData.getStandard_rank().equals(2) &&
+                (!standardListData.getSecondary_headline_rank().equals(0) ||
+                        standardListData.getHeadline_rank().equals(0))) {
+            standardListResponse.setErr_no(101180044);
+            standardListResponse.setErr_msg("secondary_headline_rank should be 0 or headline_rank" +
+                    " can't be 0");
+            return standardListResponse;
+        } else if (standardListData.getStandard_rank().equals(3) &&
+                (standardListData.getSecondary_headline_rank().equals(0) ||
+                        standardListData.getHeadline_rank().equals(0))) {
+            standardListResponse.setErr_no(101180045);
+            standardListResponse.setErr_msg("secondary_headline_rank or headline_rank can't be 0");
+            return standardListResponse;
+        }
+
+
+        List<StandardLibrary> standardLibraryList =
+                standardService.list(standardListData.getStandard_rank(),
+                        standardListData.getHeadline_rank(),
+                        standardListData.getSecondary_headline_rank());
+
+        List<StandardListResponse.StandardListResData> standardListResDataList = new ArrayList<>();
+        for (StandardLibrary standardLibrary : standardLibraryList) {
+            StandardListResponse.StandardListResData standardListResData =
+                    new StandardListResponse.StandardListResData();
+            BeanUtils.copyProperties(standardLibrary, standardListResData);
+            standardListResDataList.add(standardListResData);
+        }
+
+        standardListResponse.setData(standardListResDataList);
+        return standardListResponse;
     }
 }

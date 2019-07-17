@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author: gaofeng
  * @Date: 2019-07-16
@@ -52,5 +54,28 @@ public class StandardService {
         standardLibrary.setStandard_id(Generator.generateLongId());
         Integer result = standardLibraryMapper.create(standardLibrary);
         return (result == 1 ? true : false);
+    }
+
+    /**
+     * 按标题等级返回list
+     *
+     * @param standardRank
+     * @param headlineRank
+     * @param secondaryHeadlineRank
+     *
+     * @return
+     */
+    public List<StandardLibrary> list(Integer standardRank, Integer headlineRank,
+                                      Integer secondaryHeadlineRank) {
+        log.info("enter list standardRank={} headline_rank={} secondary_headline_rank={}",
+                standardRank, headlineRank, secondaryHeadlineRank);
+        if (standardRank.equals(1)) {
+            return standardLibraryMapper.selectListByStandardRankFirst();
+        } else if (standardRank.equals(2)) {
+            return standardLibraryMapper.selectListByStandardRankSecond(headlineRank);
+        } else {
+            return standardLibraryMapper.selectListByStandardRankThird(headlineRank,
+                    secondaryHeadlineRank);
+        }
     }
 }
