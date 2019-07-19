@@ -2,6 +2,8 @@ package com.bjtu.testmanageplatform.controller;
 
 import com.bjtu.testmanageplatform.beans.CreateProjectReq;
 import com.bjtu.testmanageplatform.beans.CreateProjectResponse;
+import com.bjtu.testmanageplatform.beans.ProjectStatusReq;
+import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.service.TestProjectService;
 import lombok.extern.slf4j.Slf4j;
@@ -74,5 +76,49 @@ public class TestProjectController {
             createProjectResponse.setData(createProjectResData);
         }
         return createProjectResponse;
+    }
+
+
+    /**
+     * 更新项目状态
+     *
+     * @param request
+     * @param projectStatusReq
+     *
+     * @return
+     */
+    @RequestMapping(value = "/updateStatus")
+    public JResponse changeStatus(HttpServletRequest request,
+                                  @RequestBody @Valid ProjectStatusReq projectStatusReq) {
+        ProjectStatusReq.ProjectStatusData projectStatusData = projectStatusReq.getData();
+        log.info("change project status prokectId={} new status={}",
+                projectStatusData.getProject_id(), projectStatusData.getStatus());
+
+        JResponse jResponse = new JResponse();
+        // 如果待更改状态不在status状态范围内，则返回报错信息
+        if (projectStatusData.getStatus() < TestProject.Status.GRADE_MATERIAL_AUDIT_ING ||
+                projectStatusData.getStatus() > TestProject.Status.PROJECT_CANCELED) {
+            jResponse.setErr_no(101191548);
+            jResponse.setErr_msg("unknown status");
+        }
+
+        // 如果项目不存在返回报错信息
+        TestProject testProject =
+                testProjectService.selectByProjectId(projectStatusData.getProject_id());
+        if (testProject == null) {
+            jResponse.setErr_no(101191552);
+            jResponse.setErr_msg("unknown test project");
+            return jResponse;
+        }
+
+        // 进入业务流程，先判断该状态是否是可达状态，如果是更新数据库，如果不是返回错误
+        Boolean result = testProjectService.changeProjectStatus(testProject,
+                projectStatusData.getStatus());
+        if (!result) {
+            jResponse.setErr_no(101191637);
+            jResponse.setErr_msg("unreachasble status or db error");
+        }
+
+        return jResponse;
     }
 }

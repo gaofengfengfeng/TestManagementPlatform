@@ -23,12 +23,15 @@ public class TestProjectService {
 
     private TestProjectMapper testProjectMapper;
     private UserMapper userMapper;
+    private StateMachineService stateMachineService;
 
     @Autowired
     public TestProjectService(TestProjectMapper testProjectMapper,
-                              UserMapper userMapper) {
+                              UserMapper userMapper,
+                              StateMachineService stateMachineService) {
         this.testProjectMapper = testProjectMapper;
         this.userMapper = userMapper;
+        this.stateMachineService = stateMachineService;
     }
 
     /**
@@ -41,6 +44,18 @@ public class TestProjectService {
     public TestProject selectByName(String name) {
         log.info("enter select project by name. name={}", name);
         return testProjectMapper.selectByName(name.trim());
+    }
+
+    /**
+     * 根据项目id查找项目
+     *
+     * @param projectId
+     *
+     * @return
+     */
+    public TestProject selectByProjectId(Long projectId) {
+        log.info("enter selectByProjectId projectId={}", projectId);
+        return testProjectMapper.selectByProjectId(projectId);
     }
 
 
@@ -64,6 +79,7 @@ public class TestProjectService {
         // 随机取一名测试负责人将任务分配给他
         // TODO: 后续可以写一个分配策略，目前直接分配给第一个人
         User testLeader = testLeaders.get(0);
+        // TODO: 需要短信通知测试负责人
 
         // 完善testProject对象属性
         testProject.setProject_id(Generator.generateLongId());
@@ -73,5 +89,34 @@ public class TestProjectService {
         testProject.setProject_location_code(0);
         Integer result = testProjectMapper.insert(testProject);
         return result == 1 ? testProject.getProject_id() : 0L;
+    }
+
+
+    /**
+     * 更改测试项目状态
+     *
+     * @param testProject
+     * @param newStatus
+     *
+     * @return
+     */
+    public Boolean changeProjectStatus(TestProject testProject, Integer newStatus) {
+
+        Integer oldStatus = testProject.getStatus();
+        log.info("changePojectStatus oldStatus={} newStatus={}", oldStatus, newStatus);
+
+        // 判断新状态是否是可达状态
+        if (!stateMachineService.isReachable(oldStatus, newStatus)) {
+            log.info("unreachable status");
+            return false;
+        }
+
+        // 更新数据库状态
+        Integer affect = testProjectMapper.updateStatusByProjectId(testProject.getProject_id(),
+                newStatus);
+        if (affect.equals(1)) {
+            return true;
+        }
+        return false;
     }
 }

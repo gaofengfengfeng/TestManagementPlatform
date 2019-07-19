@@ -4,6 +4,7 @@ import com.bjtu.testmanageplatform.model.TestProject;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,4 +26,9 @@ public interface TestProjectMapper {
     @Select("SELECT * FROM test_project WHERE name=#{name}")
     TestProject selectByName(String name);
 
+    @Select("SELECT * FROM test_project WHERE project_id=#{projectId}")
+    TestProject selectByProjectId(Long projectId);
+
+    @Update("UPDATE test_project SET status=#{1} WHERE project_id=#{0}")
+    Integer updateStatusByProjectId(Long projectId, Integer status);
 }
