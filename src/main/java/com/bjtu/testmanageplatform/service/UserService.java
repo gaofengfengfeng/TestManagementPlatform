@@ -146,4 +146,25 @@ public class UserService {
 
         return retriveUserResDataList;
     }
+
+
+    /**
+     * 判断传来的用户是否都为某种角色
+     *
+     * @param userIds
+     * @param role
+     *
+     * @return
+     */
+    public Boolean checkUserRole(List<Long> userIds, Integer role) {
+        log.info("enter checkUserRole role={}", role);
+
+        for (Long userId : userIds) {
+            Integer roleInDb = userMapper.selectRoleByUserId(userId);
+            if (!roleInDb.equals(role)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

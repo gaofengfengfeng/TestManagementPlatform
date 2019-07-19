@@ -1,11 +1,14 @@
 package com.bjtu.testmanageplatform.controller;
 
+import com.bjtu.testmanageplatform.beans.AssignTesterReq;
 import com.bjtu.testmanageplatform.beans.CreateProjectReq;
 import com.bjtu.testmanageplatform.beans.CreateProjectResponse;
 import com.bjtu.testmanageplatform.beans.ProjectStatusReq;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.model.TestProject;
+import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.TestProjectService;
+import com.bjtu.testmanageplatform.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +30,13 @@ import javax.validation.Valid;
 public class TestProjectController {
 
     private TestProjectService testProjectService;
+    private UserService userService;
 
     @Autowired
-    public TestProjectController(TestProjectService testProjectService) {
+    public TestProjectController(TestProjectService testProjectService,
+                                 UserService userService) {
         this.testProjectService = testProjectService;
+        this.userService = userService;
     }
 
 
@@ -117,6 +123,51 @@ public class TestProjectController {
         if (!result) {
             jResponse.setErr_no(101191637);
             jResponse.setErr_msg("unreachasble status or db error");
+        }
+
+        return jResponse;
+    }
+
+    /**
+     * 为测试项目配置测试人员
+     *
+     * @param request
+     * @param assignTesterReq
+     *
+     * @return
+     */
+    @RequestMapping(value = "/assignTester")
+    public JResponse assignTester(HttpServletRequest request,
+                                  @RequestBody @Valid AssignTesterReq assignTesterReq) {
+        AssignTesterReq.AssignTesterData assignTesterData = assignTesterReq.getData();
+        log.info("assignTester projectId={}", assignTesterData.getProject_id());
+        JResponse jResponse = new JResponse();
+
+        // 判断该项目是否存在
+        TestProject testProject =
+                testProjectService.selectByProjectId(assignTesterData.getProject_id());
+        if (testProject == null) {
+            jResponse.setErr_no(101192103);
+            jResponse.setErr_msg("unknown test project");
+            return jResponse;
+        }
+
+        // 判断这些用户是够都是测试人员
+        Boolean isAllTesters = userService.checkUserRole(assignTesterData.getTesters(),
+                User.Role.TESTER);
+        if (!isAllTesters) {
+            jResponse.setErr_no(101192110);
+            jResponse.setErr_msg("not all users are tester");
+            return jResponse;
+        }
+
+        // 创建测试项目和测试人员之间的关系表
+        Boolean result = testProjectService.assignTester(assignTesterData.getProject_id(),
+                assignTesterData.getTesters());
+
+        if (!result) {
+            jResponse.setErr_no(101192124);
+            jResponse.setErr_msg("db error");
         }
 
         return jResponse;

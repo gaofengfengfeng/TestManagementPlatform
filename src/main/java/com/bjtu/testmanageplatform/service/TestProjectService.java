@@ -1,14 +1,17 @@
 package com.bjtu.testmanageplatform.service;
 
+import com.bjtu.testmanageplatform.mapper.ProjectTesterRelationMapper;
 import com.bjtu.testmanageplatform.mapper.TestProjectMapper;
 import com.bjtu.testmanageplatform.mapper.UserMapper;
+import com.bjtu.testmanageplatform.model.ProjectTesterRelation;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 
@@ -24,14 +27,17 @@ public class TestProjectService {
     private TestProjectMapper testProjectMapper;
     private UserMapper userMapper;
     private StateMachineService stateMachineService;
+    private ProjectTesterRelationMapper projectTesterRelationMapper;
 
     @Autowired
     public TestProjectService(TestProjectMapper testProjectMapper,
                               UserMapper userMapper,
-                              StateMachineService stateMachineService) {
+                              StateMachineService stateMachineService,
+                              ProjectTesterRelationMapper projectTesterRelationMapper) {
         this.testProjectMapper = testProjectMapper;
         this.userMapper = userMapper;
         this.stateMachineService = stateMachineService;
+        this.projectTesterRelationMapper = projectTesterRelationMapper;
     }
 
     /**
@@ -118,5 +124,32 @@ public class TestProjectService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 为项目设置测试人员，该方法应为事务方法，只要有一条插入失败，全部回滚
+     *
+     * @param projectId
+     * @param testIds
+     *
+     * @return
+     */
+    @Transactional
+    public Boolean assignTester(Long projectId, List<Long> testIds) {
+        log.info("assignTester projectId={}", projectId);
+
+        for (Long testerId : testIds) {
+            ProjectTesterRelation projectTesterRelation = new ProjectTesterRelation();
+            projectTesterRelation.setRelation_id(Generator.generateLongId());
+            projectTesterRelation.setProject_id(projectId);
+            projectTesterRelation.setTester_id(testerId);
+            Integer affect = projectTesterRelationMapper.insert(projectTesterRelation);
+            if (!affect.equals(1)) {
+                // 事务回滚 return false
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return false;
+            }
+        }
+        return true;
     }
 }
