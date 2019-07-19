@@ -11,6 +11,7 @@ import lombok.Data;
 public class TestProject {
 
     private Long project_id;
+    private String name;
     private Long test_leader_id;
     private Long under_test_leader_id;
     private Integer status;

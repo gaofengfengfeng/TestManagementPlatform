@@ -158,6 +158,14 @@ public class UserController {
         return jResponse;
     }
 
+    /**
+     * 根据用户角色拉取用户列表
+     *
+     * @param request
+     * @param retriveUserReq
+     *
+     * @return
+     */
     @RequestMapping(value = "getUsersByRole")
     public RetriveUserResponse getUserByRole(HttpServletRequest request,
                                              @RequestBody @Valid RetriveUserReq retriveUserReq) {
