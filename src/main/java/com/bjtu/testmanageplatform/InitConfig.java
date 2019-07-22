@@ -31,12 +31,14 @@ public class InitConfig {
         Const.privateKey = JProperties.getValueByKey("conf", "privateKey");
         Const.publicKey = JProperties.getValueByKey("conf", "publicKey");
         Const.aesKey = JProperties.getValueByKey("conf", "aesKey");
+        Const.staticAddress = JProperties.getValueByKey("conf" , "staticAddress");
     }
 
     public static class Const {
         public static String privateKey = "";
         public static String publicKey = "";
         public static String aesKey = "";
+        public static String staticAddress = "";
     }
 
 }
