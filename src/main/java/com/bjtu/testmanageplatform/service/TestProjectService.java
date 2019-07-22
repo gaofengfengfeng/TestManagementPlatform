@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -151,5 +152,33 @@ public class TestProjectService {
             }
         }
         return true;
+    }
+
+
+    /**
+     * 根据用户角色和用户id查找他所负责的测试项目
+     *
+     * @param userId
+     * @param role
+     *
+     * @return
+     */
+    public List<TestProject> list(Long userId, Integer role) {
+        log.info("enter project list userId={} role={}", userId, role);
+
+        // 根据不同用户角色调用不同查找项目的方法
+        if (role.equals(User.Role.UNDER_TEST_LEADER)) {
+            return testProjectMapper.selectByUnderTestLeaderId(userId);
+        } else if (role.equals(User.Role.TEST_LEADER)) {
+            return testProjectMapper.selectByTestLeaderId(userId);
+        } else if (role.equals(User.Role.TESTER)) {
+            List<Long> projectIds = projectTesterRelationMapper.selectProjectIdsByTesterId(userId);
+            List<TestProject> testProjects = new ArrayList<>();
+            for (Long projectId : projectIds) {
+                testProjects.add(testProjectMapper.selectByProjectId(projectId));
+            }
+            return testProjects;
+        }
+        return null;
     }
 }

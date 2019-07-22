@@ -1,10 +1,9 @@
 package com.bjtu.testmanageplatform.controller;
 
-import com.bjtu.testmanageplatform.beans.AssignTesterReq;
-import com.bjtu.testmanageplatform.beans.CreateProjectReq;
-import com.bjtu.testmanageplatform.beans.CreateProjectResponse;
-import com.bjtu.testmanageplatform.beans.ProjectStatusReq;
+import com.bjtu.testmanageplatform.beans.*;
+import com.bjtu.testmanageplatform.beans.base.JRequest;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
+import com.bjtu.testmanageplatform.beans.base.UserProfile;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.TestProjectService;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: gaofeng
@@ -169,7 +170,48 @@ public class TestProjectController {
             jResponse.setErr_no(101192124);
             jResponse.setErr_msg("db error");
         }
-
         return jResponse;
+    }
+
+
+    /**
+     * 拉取某个用户所负责的所有项目列表
+     *
+     * @param request
+     * @param jRequest
+     *
+     * @return
+     */
+    @RequestMapping(value = "/list")
+    public ProjectListResponse list(HttpServletRequest request,
+                                    @Valid @RequestBody JRequest jRequest) {
+        UserProfile userProfile = jRequest.getUser_profile();
+        log.info("project list userId={}", userProfile.getUser_id());
+        ProjectListResponse projectListResponse = new ProjectListResponse();
+
+        // 需要根据不同的用户角色拉取相应的项目列表，比如 测试单位负责人、被测单位项目负责人的记录存在test_project表中
+        // 而实际测试人员和项目的关系则存在project_tester_relation表中
+        Integer role = userService.getRoleByUserId(userProfile.getUser_id());
+
+        // TODO: 目前只支持测试单位负责人、被测单位项目负责人、实际测试人员拉取项目列表
+        if (!role.equals(User.Role.UNDER_TEST_LEADER) &&
+                !role.equals(User.Role.TEST_LEADER) &&
+                !role.equals(User.Role.TESTER)) {
+            projectListResponse.setErr_no(101200042);
+            projectListResponse.setErr_msg("the role of this user is not supported at present");
+            return projectListResponse;
+        }
+
+        List<TestProject> testProjects = testProjectService.list(userProfile.getUser_id(), role);
+        List<ProjectListResponse.Project> projects = new ArrayList<>();
+        for (TestProject testProject : testProjects) {
+            ProjectListResponse.Project project = new ProjectListResponse.Project();
+            BeanUtils.copyProperties(testProject, project);
+            project.setUnder_test_leader_name(userService.getNameByUserId(testProject.getUnder_test_leader_id()));
+            project.setTest_leader_name(userService.getNameByUserId(testProject.getTest_leader_id()));
+            projects.add(project);
+        }
+        projectListResponse.setData(projects);
+        return projectListResponse;
     }
 }

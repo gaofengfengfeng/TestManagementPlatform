@@ -167,4 +167,17 @@ public class UserService {
         }
         return true;
     }
+
+
+    /**
+     * 通过用户id查找用户姓名
+     *
+     * @param userId
+     *
+     * @return
+     */
+    public String getNameByUserId(Long userId) {
+        log.info("enter getNameByUserId userId={}", userId);
+        return userMapper.selectNameByUserId(userId);
+    }
 }
