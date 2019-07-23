@@ -1,6 +1,8 @@
 package com.bjtu.testmanageplatform.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.bjtu.testmanageplatform.beans.template.*;
 import com.bjtu.testmanageplatform.mapper.ProjectTesterRelationMapper;
 import com.bjtu.testmanageplatform.mapper.StandardLibraryMapper;
@@ -206,44 +208,30 @@ public class TestProjectService {
         String rank = testProject.getRank();
         String[] rankAfterSplit = rank.split(",");
 
-        Template template = new Template();
-        List<Rank> rankList = new ArrayList<>();
-        for (String r : rankAfterSplit) {
-            // 首先拿到一级标题
-            Rank rankTemplate = new Rank();
-            rankTemplate.setName(r);
-            List<StandardLibrary> headlines = standardLibraryMapper.selectHeadlinesByRank();
-            List<Headline> headlineList = new ArrayList<>();
-            for (StandardLibrary h : headlines) {
-                Headline headline = new Headline();
-                headline.setName(h.getHeadline());
-                List<StandardLibrary> secondaryHeadlines =
-                        standardLibraryMapper.selectSecondaryHeadlinesByRankAndHeadline(h.getHeadline_rank());
-                List<SecondaryHeadline> secondaryHeadlineList = new ArrayList<>();
-                for (StandardLibrary sh : secondaryHeadlines) {
-                    SecondaryHeadline secondaryHeadline = new SecondaryHeadline();
-                    secondaryHeadline.setName(sh.getSecondary_headline());
-                    List<StandardLibrary> names =
-                            standardLibraryMapper.selectNamesByRankAndHeadlineAndSecondaryHeadline
-                                    (r, h.getHeadline_rank(), sh.getSecondary_headline_rank());
-                    List<Content> contents = new ArrayList<>();
-                    for (StandardLibrary name : names) {
-                        Content content = new Content();
-                        content.setName(name.getName());
-                        content.setContent(name.getContent());
-                        contents.add(content);
-                    }
-                    secondaryHeadline.setContents(contents);
-                    secondaryHeadlineList.add(secondaryHeadline);
+        // 首先拿到一级标题
+        List<StandardLibrary> headlines = standardLibraryMapper.selectHeadlinesByRank();
+        JSONObject firstHeadline = new JSONObject();
+        for (StandardLibrary h : headlines) {
+            List<StandardLibrary> secondaryHeadlines =
+                    standardLibraryMapper.selectSecondaryHeadlinesByRankAndHeadline(h.getHeadline_rank());
+            JSONObject secondHeadline = new JSONObject();
+            for (StandardLibrary sh : secondaryHeadlines) {
+                List<StandardLibrary> names =
+                        standardLibraryMapper.selectNamesByRankAndHeadlineAndSecondaryHeadline
+                                (rankAfterSplit, h.getHeadline_rank(),
+                                        sh.getSecondary_headline_rank());
+                JSONObject contents = new JSONObject();
+                for (StandardLibrary name : names) {
+                    JSONObject content = new JSONObject();
+                    content.put("content", name.getContent());
+                    contents.put(name.getName(), content);
                 }
-                headline.setSecondaryHeadlines(secondaryHeadlineList);
-                headlineList.add(headline);
+                secondHeadline.put(sh.getSecondary_headline(), contents);
             }
-            rankTemplate.setHeadlines(headlineList);
-            rankList.add(rankTemplate);
+            firstHeadline.put(h.getHeadline(), secondHeadline);
         }
-        template.setTemplate(rankList);
-
-        return JSON.toJSONString(template);
+        String template = JSON.toJSONString(firstHeadline);
+        System.out.println(template);
+        return template;
     }
 }

@@ -3,6 +3,7 @@ package com.bjtu.testmanageplatform.mapper;
 import com.bjtu.testmanageplatform.model.StandardLibrary;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
@@ -50,9 +51,18 @@ public interface StandardLibraryMapper {
             "headline_rank=#{headlineRank} ORDER BY secondary_headline_rank")
     List<StandardLibrary> selectSecondaryHeadlinesByRankAndHeadline(Integer headlineRank);
 
-    @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND rank=#{0} AND " +
-            "headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY name_rank")
-    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadline(String rank,
+    // @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND rank in #{0} AND " +
+    //         "headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY name_rank")
+    @Select({
+            "<script>",
+            "SELECT * FROM standard_library where standard_rank=3 AND rank in",
+            "<foreach collection='rank' item='item' open='(' separator=',' close=')'>",
+            "#{item}",
+            "</foreach>",
+            " AND headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY name_rank",
+            "</script>"
+    })
+    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadline(@Param("rank") String[] rank,
                                                                            Integer headlineRank,
                                                                            Integer secondaryHeadlineRank);
 
