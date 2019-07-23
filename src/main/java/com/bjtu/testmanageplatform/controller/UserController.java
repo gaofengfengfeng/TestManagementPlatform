@@ -68,7 +68,8 @@ public class UserController {
         }
 
         // 密码正确生成token，将生成的token存入redis key值为user_id，value则为生成的token
-        String token = Generator.generateToken(user.getUsername(), user.getUserId());
+        String token = Generator.generateToken(user.getUsername(), user.getUserId(),
+                user.getPhone());
         Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
         jedis.setex(InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), InitConfig.ONE_DAY_EXPIRE,
                 token);
@@ -166,7 +167,7 @@ public class UserController {
      *
      * @return
      */
-    @RequestMapping(value = "getUsersByRole")
+    @RequestMapping(value = "/getUsersByRole")
     public RetriveUserResponse getUserByRole(HttpServletRequest request,
                                              @RequestBody @Valid RetriveUserReq retriveUserReq) {
         RetriveUserReq.RetriveUserData retriveUserData = retriveUserReq.getData();

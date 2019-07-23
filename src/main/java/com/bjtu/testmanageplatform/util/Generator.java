@@ -50,11 +50,12 @@ public class Generator {
      *
      * @return
      */
-    public static String generateToken(String username, Long UserId) {
+    public static String generateToken(String username, Long UserId, String phone) {
         // 构建一个实体对象
         TokenObject tokenObject = new TokenObject();
         tokenObject.setUsername(username);
         tokenObject.setUserId(UserId);
+        tokenObject.setPhone(phone);
 
         // 实体对象转json字符串，生成token
         String jsonStr = JSON.toJSONString(tokenObject);

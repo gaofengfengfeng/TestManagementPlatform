@@ -3,6 +3,10 @@ package com.bjtu.testmanageplatform;
 import com.alibaba.fastjson.JSON;
 import com.bjtu.testmanageplatform.beans.base.JRequest;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
+import com.bjtu.testmanageplatform.beans.base.TokenObject;
+import com.bjtu.testmanageplatform.beans.base.UserProfile;
+import com.bjtu.testmanageplatform.util.Generator;
+import com.bjtu.testmanageplatform.util.service.JRedisPoolService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -15,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -42,7 +47,9 @@ public class WebLogicAspect {
                 (ServletRequestAttributes) requestAttribute;
         HttpServletRequest request = servletRequestAttributes.getRequest();
 
-        if (request.getRequestURI().equals("/v1/file/upload")) {
+        if (request.getRequestURI().equals("/v1/file/upload") ||
+                request.getRequestURI().equals("v1/user/createAdministrator") ||
+                request.getRequestURI().equals("/v1/user/login")) {
             return proceedingJoinPoint.proceed();
         }
 
@@ -51,17 +58,29 @@ public class WebLogicAspect {
         log.info(requestBody);
         JRequest jRequest = JSON.parseObject(requestBody, JRequest.class);
 
-        // 用户身份鉴权、token校验
-
-        // 如果校验不通过，获取返回类型，返回错误信息
-
         // 取得拦截方法的返回类型
         Signature signature = proceedingJoinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method targetMethod = methodSignature.getMethod();
 
+        // 检查token是否与redis中的相同
+        // 用户身份鉴权、token校验
+        // TokenObject tokenObject = Generator.parseToken(jRequest.getToken());
+        UserProfile userProfile = jRequest.getUser_profile();
+
+        Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
+        String tokenInRedis = jedis.get(InitConfig.LOGIN_TOKEN_PRE + userProfile.getUser_id());
+
+        if (!jRequest.getToken().equals(tokenInRedis)) {
+            JResponse jResponse = (JResponse) targetMethod.getReturnType().newInstance();
+            jResponse.setErr_no(101232110);
+            jResponse.setErr_msg("wrong token");
+            return jResponse;
+        }
+
+
         // 判断返回类型是否是JResponse的子类
-        boolean isFather = JResponse.class.isAssignableFrom(targetMethod.getReturnType());
+        // boolean isFather = JResponse.class.isAssignableFrom(targetMethod.getReturnType());
 
         // JResponse jResponse = (JResponse) targetMethod.getReturnType().newInstance();
         // jResponse.setErrNo(10000000);

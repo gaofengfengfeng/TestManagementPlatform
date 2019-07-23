@@ -11,5 +11,6 @@ import lombok.Data;
 public class TokenObject {
     private String username;
     private Long userId;
+    private String phone;
     private Long loginTime = System.currentTimeMillis();
 }
