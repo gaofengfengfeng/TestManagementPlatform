@@ -42,6 +42,10 @@ public class WebLogicAspect {
                 (ServletRequestAttributes) requestAttribute;
         HttpServletRequest request = servletRequestAttributes.getRequest();
 
+        if (request.getRequestURI().equals("/v1/file/upload")) {
+            return proceedingJoinPoint.proceed();
+        }
+
         // 取出在JMessageConverter中放置的 _requestBody属性，里面是请求体字符串
         String requestBody = (String) request.getAttribute("_requestBody");
         log.info(requestBody);
