@@ -35,6 +35,7 @@ public class JMessageConverter implements HttpMessageConverter {
     public JMessageConverter() {
         supportedMediaTypes = new ArrayList<>();
         supportedMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+        supportedMediaTypes.add(MediaType.MULTIPART_FORM_DATA);
     }
 
     @Override
