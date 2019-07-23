@@ -1,12 +1,17 @@
 package com.bjtu.testmanageplatform.service;
 
+import com.alibaba.fastjson.JSON;
+import com.bjtu.testmanageplatform.beans.template.*;
 import com.bjtu.testmanageplatform.mapper.ProjectTesterRelationMapper;
+import com.bjtu.testmanageplatform.mapper.StandardLibraryMapper;
 import com.bjtu.testmanageplatform.mapper.TestProjectMapper;
 import com.bjtu.testmanageplatform.mapper.UserMapper;
 import com.bjtu.testmanageplatform.model.ProjectTesterRelation;
+import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
+import com.sun.tools.doclets.standard.Standard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,16 +34,19 @@ public class TestProjectService {
     private UserMapper userMapper;
     private StateMachineService stateMachineService;
     private ProjectTesterRelationMapper projectTesterRelationMapper;
+    private StandardLibraryMapper standardLibraryMapper;
 
     @Autowired
     public TestProjectService(TestProjectMapper testProjectMapper,
                               UserMapper userMapper,
                               StateMachineService stateMachineService,
-                              ProjectTesterRelationMapper projectTesterRelationMapper) {
+                              ProjectTesterRelationMapper projectTesterRelationMapper,
+                              StandardLibraryMapper standardLibraryMapper) {
         this.testProjectMapper = testProjectMapper;
         this.userMapper = userMapper;
         this.stateMachineService = stateMachineService;
         this.projectTesterRelationMapper = projectTesterRelationMapper;
+        this.standardLibraryMapper = standardLibraryMapper;
     }
 
     /**
@@ -180,5 +188,62 @@ public class TestProjectService {
             return testProjects;
         }
         return null;
+    }
+
+
+    /**
+     * 根据项目的定级生成项目测试报告
+     *
+     * @param testProject
+     *
+     * @return
+     */
+    public String getTemplate(TestProject testProject) {
+        log.info("enter getTemplate projectId={} rank={}", testProject.getProject_id(),
+                testProject.getRank());
+
+        // 拿到项目的定级并解析
+        String rank = testProject.getRank();
+        String[] rankAfterSplit = rank.split(",");
+
+        Template template = new Template();
+        List<Rank> rankList = new ArrayList<>();
+        for (String r : rankAfterSplit) {
+            // 首先拿到一级标题
+            Rank rankTemplate = new Rank();
+            rankTemplate.setName(r);
+            List<StandardLibrary> headlines = standardLibraryMapper.selectHeadlinesByRank();
+            List<Headline> headlineList = new ArrayList<>();
+            for (StandardLibrary h : headlines) {
+                Headline headline = new Headline();
+                headline.setName(h.getHeadline());
+                List<StandardLibrary> secondaryHeadlines =
+                        standardLibraryMapper.selectSecondaryHeadlinesByRankAndHeadline(h.getHeadline_rank());
+                List<SecondaryHeadline> secondaryHeadlineList = new ArrayList<>();
+                for (StandardLibrary sh : secondaryHeadlines) {
+                    SecondaryHeadline secondaryHeadline = new SecondaryHeadline();
+                    secondaryHeadline.setName(sh.getSecondary_headline());
+                    List<StandardLibrary> names =
+                            standardLibraryMapper.selectNamesByRankAndHeadlineAndSecondaryHeadline
+                                    (r, h.getHeadline_rank(), sh.getSecondary_headline_rank());
+                    List<Content> contents = new ArrayList<>();
+                    for (StandardLibrary name : names) {
+                        Content content = new Content();
+                        content.setName(name.getName());
+                        content.setContent(name.getContent());
+                        contents.add(content);
+                    }
+                    secondaryHeadline.setContents(contents);
+                    secondaryHeadlineList.add(secondaryHeadline);
+                }
+                headline.setSecondaryHeadlines(secondaryHeadlineList);
+                headlineList.add(headline);
+            }
+            rankTemplate.setHeadlines(headlineList);
+            rankList.add(rankTemplate);
+        }
+        template.setTemplate(rankList);
+
+        return JSON.toJSONString(template);
     }
 }

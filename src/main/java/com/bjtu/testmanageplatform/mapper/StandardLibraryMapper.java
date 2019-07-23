@@ -42,6 +42,20 @@ public interface StandardLibraryMapper {
             "secondary_headline_rank, name_rank")
     List<StandardLibrary> selectListByStandardRankFirst();
 
+    @Select("SELECT * FROM standard_library WHERE standard_rank=1 ORDER BY headline_rank")
+    List<StandardLibrary> selectHeadlinesByRank();
+
+
+    @Select("SELECT * FROM standard_library WHERE standard_rank=2 AND " +
+            "headline_rank=#{headlineRank} ORDER BY secondary_headline_rank")
+    List<StandardLibrary> selectSecondaryHeadlinesByRankAndHeadline(Integer headlineRank);
+
+    @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND rank=#{0} AND " +
+            "headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY name_rank")
+    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadline(String rank,
+                                                                           Integer headlineRank,
+                                                                           Integer secondaryHeadlineRank);
+
     @Select("SELECT * FROM standard_library WHERE standard_rank=2 AND headline_rank=#{0} ORDER BY" +
             " headline_rank, secondary_headline_rank, name_rank")
     List<StandardLibrary> selectListByStandardRankSecond(Integer headlineRank);
