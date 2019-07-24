@@ -27,9 +27,19 @@ public interface UserMapper {
     String selectNameByUserId(Long userId);
 
     @Select("SELECT * FROM user where username=#{username}")
+    @Results({
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "portraitUrl", column = "portrait_url"),
+            @Result(property = "createTime", column = "create_time")
+    })
     User selectByUsername(String username);
 
     @Select("SELECT * FROM user where phone=#{phone}")
+    @Results({
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "portraitUrl", column = "portrait_url"),
+            @Result(property = "createTime", column = "create_time")
+    })
     User selectByPhone(String phone);
 
     @Select("SELECT * FROM user WHERE role=#{role}")
