@@ -2,6 +2,7 @@ package com.bjtu.testmanageplatform.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.bjtu.testmanageplatform.InitConfig;
 import com.bjtu.testmanageplatform.mapper.ProjectTesterRelationMapper;
 import com.bjtu.testmanageplatform.mapper.StandardLibraryMapper;
 import com.bjtu.testmanageplatform.mapper.TestProjectMapper;
@@ -11,6 +12,7 @@ import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
+import com.bjtu.testmanageplatform.util.SmsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,7 +95,11 @@ public class TestProjectService {
         // 随机取一名测试负责人将任务分配给他
         // TODO: 后续可以写一个分配策略，目前直接分配给第一个人
         User testLeader = testLeaders.get(0);
-        // TODO: 需要短信通知测试负责人
+
+        User underTestLeader = userMapper.selectByUserId(testProject.getUnder_test_leader_id());
+        // 需要短信通知测试负责人
+        SmsUtil.singleSendMsg(testLeader.getPhone(), InitConfig.NOTIFY_TEST_LEADER_NEW_PROJECT_ID
+                , underTestLeader.getDepartment(), testProject.getName());
 
         // 完善testProject对象属性
         testProject.setProject_id(Generator.generateLongId());

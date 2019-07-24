@@ -49,4 +49,12 @@ public interface UserMapper {
             @Result(property = "createTime", column = "create_time")
     })
     List<User> selectByRole(Integer role);
+
+    @Select("SELECT * FROM user WHERE user_id=#{userId}")
+    @Results({
+            @Result(property = "userId", column = "user_id"),
+            @Result(property = "portraitUrl", column = "portrait_url"),
+            @Result(property = "createTime", column = "create_time")
+    })
+    User selectByUserId(Long userId);
 }
