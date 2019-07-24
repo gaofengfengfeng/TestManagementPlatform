@@ -48,7 +48,7 @@ public class WebLogicAspect {
         HttpServletRequest request = servletRequestAttributes.getRequest();
 
         if (request.getRequestURI().equals("/v1/file/upload") ||
-                request.getRequestURI().equals("v1/user/createAdministrator") ||
+                request.getRequestURI().equals("/v1/user/createAdministrator") ||
                 request.getRequestURI().equals("/v1/user/login")) {
             return proceedingJoinPoint.proceed();
         }
