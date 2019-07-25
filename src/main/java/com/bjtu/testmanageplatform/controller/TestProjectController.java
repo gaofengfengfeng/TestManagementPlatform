@@ -214,4 +214,38 @@ public class TestProjectController {
         projectListResponse.setData(projects);
         return projectListResponse;
     }
+
+
+    /**
+     * 请求项目测试报告模板
+     *
+     * @param request
+     * @param templateReq
+     *
+     * @return
+     */
+    @RequestMapping(value = "/template")
+    public TemplateResponse template(HttpServletRequest request,
+                                     @Valid @RequestBody TemplateReq templateReq) {
+        TemplateReq.TemplateData templateData = templateReq.getData();
+        log.info("template projectId={}", templateData.getProject_id());
+        TemplateResponse templateResponse = new TemplateResponse();
+
+        // 判断该项目是否存在
+        TestProject testProject =
+                testProjectService.selectByProjectId(templateData.getProject_id());
+        if (testProject == null) {
+            templateResponse.setErr_no(101230121);
+            templateResponse.setErr_msg("unknown test project");
+            return templateResponse;
+        }
+
+        String content = testProjectService.getTemplate(testProject);
+
+        TemplateResponse.TemplateResData templateResData = new TemplateResponse.TemplateResData();
+        templateResData.setContent(content);
+        templateResponse.setData(templateResData);
+
+        return templateResponse;
+    }
 }

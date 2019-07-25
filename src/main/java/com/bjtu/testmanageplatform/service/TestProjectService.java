@@ -1,12 +1,18 @@
 package com.bjtu.testmanageplatform.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.bjtu.testmanageplatform.InitConfig;
 import com.bjtu.testmanageplatform.mapper.ProjectTesterRelationMapper;
+import com.bjtu.testmanageplatform.mapper.StandardLibraryMapper;
 import com.bjtu.testmanageplatform.mapper.TestProjectMapper;
 import com.bjtu.testmanageplatform.mapper.UserMapper;
 import com.bjtu.testmanageplatform.model.ProjectTesterRelation;
+import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
+import com.bjtu.testmanageplatform.util.SmsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,16 +35,19 @@ public class TestProjectService {
     private UserMapper userMapper;
     private StateMachineService stateMachineService;
     private ProjectTesterRelationMapper projectTesterRelationMapper;
+    private StandardLibraryMapper standardLibraryMapper;
 
     @Autowired
     public TestProjectService(TestProjectMapper testProjectMapper,
                               UserMapper userMapper,
                               StateMachineService stateMachineService,
-                              ProjectTesterRelationMapper projectTesterRelationMapper) {
+                              ProjectTesterRelationMapper projectTesterRelationMapper,
+                              StandardLibraryMapper standardLibraryMapper) {
         this.testProjectMapper = testProjectMapper;
         this.userMapper = userMapper;
         this.stateMachineService = stateMachineService;
         this.projectTesterRelationMapper = projectTesterRelationMapper;
+        this.standardLibraryMapper = standardLibraryMapper;
     }
 
     /**
@@ -86,7 +95,11 @@ public class TestProjectService {
         // 随机取一名测试负责人将任务分配给他
         // TODO: 后续可以写一个分配策略，目前直接分配给第一个人
         User testLeader = testLeaders.get(0);
-        // TODO: 需要短信通知测试负责人
+
+        User underTestLeader = userMapper.selectByUserId(testProject.getUnder_test_leader_id());
+        // 需要短信通知测试负责人
+        SmsUtil.singleSendMsg(testLeader.getPhone(), InitConfig.NOTIFY_TEST_LEADER_NEW_PROJECT_ID
+                , underTestLeader.getDepartment(), testProject.getName());
 
         // 完善testProject对象属性
         testProject.setProject_id(Generator.generateLongId());
@@ -180,5 +193,48 @@ public class TestProjectService {
             return testProjects;
         }
         return null;
+    }
+
+
+    /**
+     * 根据项目的定级生成项目测试报告
+     *
+     * @param testProject
+     *
+     * @return
+     */
+    public String getTemplate(TestProject testProject) {
+        log.info("enter getTemplate projectId={} rank={}", testProject.getProject_id(),
+                testProject.getRank());
+
+        // 拿到项目的定级并解析
+        String rank = testProject.getRank();
+        String[] rankAfterSplit = rank.split(",");
+
+        // 首先拿到一级标题
+        List<StandardLibrary> headlines = standardLibraryMapper.selectHeadlinesByRank();
+        JSONObject firstHeadline = new JSONObject();
+        for (StandardLibrary h : headlines) {
+            List<StandardLibrary> secondaryHeadlines =
+                    standardLibraryMapper.selectSecondaryHeadlinesByRankAndHeadline(h.getHeadline_rank());
+            JSONObject secondHeadline = new JSONObject();
+            for (StandardLibrary sh : secondaryHeadlines) {
+                List<StandardLibrary> names =
+                        standardLibraryMapper.selectNamesByRankAndHeadlineAndSecondaryHeadline
+                                (rankAfterSplit, h.getHeadline_rank(),
+                                        sh.getSecondary_headline_rank());
+                JSONObject contents = new JSONObject();
+                for (StandardLibrary name : names) {
+                    JSONObject content = new JSONObject();
+                    content.put("content", name.getContent());
+                    contents.put(name.getName(), content);
+                }
+                secondHeadline.put(sh.getSecondary_headline(), contents);
+            }
+            firstHeadline.put(h.getHeadline(), secondHeadline);
+        }
+        String template = JSON.toJSONString(firstHeadline);
+        System.out.println(template);
+        return template;
     }
 }

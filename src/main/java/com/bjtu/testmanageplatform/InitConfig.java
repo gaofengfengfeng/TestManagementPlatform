@@ -16,6 +16,11 @@ public class InitConfig {
     public final static String REDIS_POOL = "redis_pool";
     public final static Integer ONE_DAY_EXPIRE = 24 * 60 * 60;
     public final static String LOGIN_TOKEN_PRE = "login_token_";
+    // 通知测评单位负责人有新项目的模板id
+    public final static Integer NOTIFY_TEST_LEADER_NEW_PROJECT_ID = 377481;
+    public final static Integer NOTIFY_UNDER_TEST_LEADER_NOT_PASS_ID = 381187;
+    public final static Integer NOTIFY_UNDER_TEST_LEADER_PASS_ID = 381188;
+
 
     public static void init() {
         // 注册单机redis服务
