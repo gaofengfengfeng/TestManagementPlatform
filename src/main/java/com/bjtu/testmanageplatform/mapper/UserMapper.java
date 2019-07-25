@@ -23,6 +23,9 @@ public interface UserMapper {
     @Select("SELECT role from user WHERE user_id=#{userId}")
     Integer selectRoleByUserId(Long userId);
 
+    @Select("SELECT name from user WHERE user_id=#{userId}")
+    String selectNameByUserId(Long userId);
+
     @Select("SELECT * FROM user where username=#{username}")
     User selectByUsername(String username);
 
