@@ -8,8 +8,8 @@ import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.UserService;
 import com.bjtu.testmanageplatform.util.Encryption;
 import com.bjtu.testmanageplatform.util.Generator;
+import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.service.JRedisPoolService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +25,6 @@ import java.util.List;
  * @Date: 2019-07-04
  * @Description: 用户中心
  */
-@Slf4j
 @RestController
 @RequestMapping(value = "/v1/user")
 public class UserController {
@@ -49,12 +48,12 @@ public class UserController {
     public LoginResponse doLogin(HttpServletRequest request,
                                  @RequestBody @Valid LoginReq loginReq) {
         LoginReq.LoginData loginData = loginReq.getData();
-        log.info("login username={}", loginData.getUsername());
+        JLog.info(String.format("login username=%s", loginData.getUsername()));
         LoginResponse loginResponse = new LoginResponse();
 
         // 判断是否存在该用户
         User user = userService.getUserByUsername(loginData.getUsername());
-        log.info(user.toString());
+        JLog.info(user.toString());
         if (user == null) {
             loginResponse.setErr_no(101131841);
             loginResponse.setErr_msg("no this username in db");
@@ -72,12 +71,13 @@ public class UserController {
                 user.getPhone());
         try {
             Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
-            log.info("key={} token={}", InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), token);
+            JLog.info(String.format("key={} token=%s",
+                    InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), token));
             jedis.setex(InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), InitConfig.ONE_DAY_EXPIRE,
                     token);
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            JLog.error(e.getMessage(), 101241317);
             loginResponse.setErr_no(101241317);
             loginResponse.setErr_msg("redis error");
             return loginResponse;
@@ -103,8 +103,8 @@ public class UserController {
     public JResponse assignUser(HttpServletRequest request,
                                 @RequestBody @Valid AssignUserReq assignUserReq) {
         AssignUserReq.AssignUserData assignUserData = assignUserReq.getData();
-        log.info("assignUser username={} name={} phone={}", assignUserData.getUsername(),
-                assignUserData.getName(), assignUserData.getPhone());
+        JLog.info(String.format("assignUser username=%s name=%s phone=%s",
+                assignUserData.getUsername(), assignUserData.getName(), assignUserData.getPhone()));
         JResponse jResponse = new JResponse();
         // 用户身份鉴别
         UserProfile userProfile = assignUserReq.getUser_profile();
@@ -153,7 +153,7 @@ public class UserController {
      */
     @RequestMapping(value = "/createAdministrator")
     public JResponse createAdministrator(HttpServletRequest request) {
-        log.info("createAdministrator");
+        JLog.info("createAdministrator");
         JResponse jResponse = new JResponse();
 
         // 构建实体对象，进入业务逻辑
@@ -181,7 +181,7 @@ public class UserController {
     public RetriveUserResponse getUserByRole(HttpServletRequest request,
                                              @RequestBody @Valid RetriveUserReq retriveUserReq) {
         RetriveUserReq.RetriveUserData retriveUserData = retriveUserReq.getData();
-        log.info("getUserByRole role={}", retriveUserData.getRole());
+        JLog.info(String.format("getUserByRole role=%s", retriveUserData.getRole()));
         RetriveUserResponse retriveUserResponse = new RetriveUserResponse();
 
         // 查找数据库，根据role查找，使user方法直接返回封装好的RetriveUserResData List

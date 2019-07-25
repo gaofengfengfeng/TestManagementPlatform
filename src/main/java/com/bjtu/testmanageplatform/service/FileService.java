@@ -2,15 +2,11 @@ package com.bjtu.testmanageplatform.service;
 
 import com.bjtu.testmanageplatform.InitConfig;
 import com.bjtu.testmanageplatform.util.Conversion;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.DateUtils;
+import com.bjtu.testmanageplatform.util.JLog;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +15,6 @@ import java.util.Random;
 /**
  * @Date: 2019-07-19
  */
-@Slf4j
 @Service
 public class FileService {
 
@@ -66,10 +61,10 @@ public class FileService {
             fileOutputStream = new FileOutputStream(targetFile);
             IOUtils.copy(file.getInputStream(), fileOutputStream);
             BackUri = getCompleteUri(fileNameAfterMd5);
-            log.info("file:{} uploaded successfully", originFilename);
+            JLog.info(String.format("file:%s uploaded successfully", originFilename));
         } catch (IOException e) {
             BackUri = null;
-            log.info("file:{} uploaded failed", originFilename);
+            JLog.info(String.format("file:%s uploaded failed", originFilename));
             return BackUri;
         }
         return BackUri;

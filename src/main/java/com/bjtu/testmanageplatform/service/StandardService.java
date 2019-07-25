@@ -3,7 +3,7 @@ package com.bjtu.testmanageplatform.service;
 import com.bjtu.testmanageplatform.mapper.StandardLibraryMapper;
 import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.util.Generator;
-import lombok.extern.slf4j.Slf4j;
+import com.bjtu.testmanageplatform.util.JLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,6 @@ import java.util.List;
  * @Date: 2019-07-16
  * @Description:
  */
-@Slf4j
 @Service
 public class StandardService {
 
@@ -36,8 +35,8 @@ public class StandardService {
      */
     public StandardLibrary findByRank(Integer headlineRank, Integer secondaryHeadlineRank,
                                       Integer nameRank) {
-        log.info("enter findByRank headlineRank={} secondaryHeadlineRank={} nameRank={}",
-                headlineRank, secondaryHeadlineRank, nameRank);
+        JLog.info(String.format("enter findByRank headlineRank=%s secondaryHeadlineRank=%s " +
+                "nameRank=%s", headlineRank, secondaryHeadlineRank, nameRank));
         return standardLibraryMapper.selectByRank(headlineRank, secondaryHeadlineRank, nameRank);
     }
 
@@ -50,7 +49,7 @@ public class StandardService {
      * @return
      */
     public Boolean create(StandardLibrary standardLibrary) {
-        log.info("enter create standardLibrary={}", standardLibrary);
+        JLog.info(String.format("enter create standardLibrary=%s", standardLibrary));
         standardLibrary.setStandard_id(Generator.generateLongId());
         Integer result = standardLibraryMapper.create(standardLibrary);
         return (result == 1 ? true : false);
@@ -67,8 +66,8 @@ public class StandardService {
      */
     public List<StandardLibrary> list(Integer standardRank, Integer headlineRank,
                                       Integer secondaryHeadlineRank) {
-        log.info("enter list standardRank={} headline_rank={} secondary_headline_rank={}",
-                standardRank, headlineRank, secondaryHeadlineRank);
+        JLog.info(String.format("enter list standardRank=%s headline_rank=%s " +
+                "secondary_headline_rank=%s", standardRank, headlineRank, secondaryHeadlineRank));
         if (standardRank.equals(1)) {
             return standardLibraryMapper.selectListByStandardRankFirst();
         } else if (standardRank.equals(2)) {

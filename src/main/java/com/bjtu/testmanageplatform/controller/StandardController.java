@@ -6,7 +6,7 @@ import com.bjtu.testmanageplatform.beans.StandardListResponse;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.service.StandardService;
-import lombok.extern.slf4j.Slf4j;
+import com.bjtu.testmanageplatform.util.JLog;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +23,6 @@ import java.util.List;
  * @Date: 2019-07-15
  * @Description:
  */
-@Slf4j
 @RestController
 @RequestMapping(value = "/v1/standard")
 public class StandardController {
@@ -47,7 +46,7 @@ public class StandardController {
     public JResponse create(HttpServletRequest request,
                             @Valid @RequestBody CreateStandardReq createStandardReq) {
         CreateStandardReq.CreateStandardData createStandardData = createStandardReq.getData();
-        log.info("create standard {}", createStandardData.toString());
+        JLog.info(String.format("create standard %s", createStandardData.toString()));
         JResponse jResponse = new JResponse();
 
         // 判断该条记录是否已经存在，如果存在则更新，如果不存在则插入
@@ -87,9 +86,10 @@ public class StandardController {
     public StandardListResponse list(HttpServletRequest request,
                                      @RequestBody @Valid StandardListReq standardListReq) {
         StandardListReq.StandardListData standardListData = standardListReq.getData();
-        log.info("standard list standardRank={} headline_rank={} secondary_headline_rank={}",
-                standardListData.getStandard_rank(), standardListData.getHeadline_rank(),
-                standardListData.getSecondary_headline_rank());
+        JLog.info(String.format("standard list standardRank=%s headline_rank=%s " +
+                        "secondary_headline_rank=%s", standardListData.getStandard_rank(),
+                standardListData.getHeadline_rank(),
+                standardListData.getSecondary_headline_rank()));
         StandardListResponse standardListResponse = new StandardListResponse();
 
         // 判断传来的传来的顺序是否合规

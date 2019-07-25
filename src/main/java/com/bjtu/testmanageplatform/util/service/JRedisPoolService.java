@@ -1,6 +1,6 @@
 package com.bjtu.testmanageplatform.util.service;
 
-import lombok.extern.slf4j.Slf4j;
+import com.bjtu.testmanageplatform.util.JLog;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date: 2019-07-13
  * @Description:
  */
-@Slf4j
 public class JRedisPoolService extends JBaseService implements MethodInterceptor {
     private static ConcurrentHashMap<String, JRedisPoolService> instancePool =
             new ConcurrentHashMap<>();
@@ -78,7 +77,7 @@ public class JRedisPoolService extends JBaseService implements MethodInterceptor
 
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-        log.debug("Call JedisPool Method: " + method.getName());
+        JLog.debug("Call JedisPool Method: " + method.getName());
         return methodProxy.invokeSuper(obj, args);
     }
 

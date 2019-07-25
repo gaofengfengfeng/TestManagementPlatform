@@ -7,8 +7,7 @@ import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Conversion;
 import com.bjtu.testmanageplatform.util.Encryption;
 import com.bjtu.testmanageplatform.util.Generator;
-import com.fasterxml.jackson.databind.util.BeanUtil;
-import lombok.extern.slf4j.Slf4j;
+import com.bjtu.testmanageplatform.util.JLog;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import java.util.List;
  * @Date: 2019-07-09
  * @Description:
  */
-@Slf4j
 @Service
 public class UserService {
 
@@ -73,7 +71,7 @@ public class UserService {
      * @return
      */
     public Boolean create(User user) {
-        log.info("enter create user phone={}", user.getPhone());
+        JLog.info(String.format("enter create user phone=%s", user.getPhone()));
         // 按照公私钥解析出密码，对其进行加盐，然后进行md5
         String decryptedPassword = Encryption.decryptData(user.getPassword(),
                 InitConfig.Const.privateKey);
@@ -86,16 +84,17 @@ public class UserService {
         user.setPassword(md5Password);
         user.setPortraitUrl("");
 
-        log.info(user.toString());
+        JLog.info(user.toString());
 
         // 插入数据库
         Integer affect = userMapper.save(user);
         if (affect.equals(1)) {
-            log.info("user save success userId={} phone={}", user.getUserId(), user.getPhone());
+            JLog.info(String.format("user save success userId=%s phone=%s", user.getUserId(),
+                    user.getPhone()));
             return true;
         } else {
-            log.error("user save failed userId={} phone={} errNo=101110127", user.getUserId(),
-                    user.getPhone());
+            JLog.error(String.format("user save failed userId=%s phone=%s errNo=101110127",
+                    user.getUserId(), user.getPhone()), 101110127);
             return false;
         }
     }
@@ -129,7 +128,7 @@ public class UserService {
      * @return
      */
     public List<RetriveUserResponse.RetriveUserResData> getUsersByRole(Integer role) {
-        log.info("enter getUsersByRole role={}", role);
+        JLog.info(String.format("enter getUsersByRole role=%s", role));
         List<User> users = userMapper.selectByRole(role);
 
         List<RetriveUserResponse.RetriveUserResData> retriveUserResDataList = new ArrayList<>();
@@ -138,7 +137,7 @@ public class UserService {
             RetriveUserResponse.RetriveUserResData retriveUserResData =
                     new RetriveUserResponse.RetriveUserResData();
             BeanUtils.copyProperties(user, retriveUserResData);
-            log.info(user.getUserId().toString());
+            JLog.info(user.getUserId().toString());
             retriveUserResData.setUser_id(user.getUserId());
             retriveUserResData.setPortrait_url(user.getPortraitUrl());
             retriveUserResDataList.add(retriveUserResData);
@@ -157,7 +156,7 @@ public class UserService {
      * @return
      */
     public Boolean checkUserRole(List<Long> userIds, Integer role) {
-        log.info("enter checkUserRole role={}", role);
+        JLog.info(String.format("enter checkUserRole role=%s", role));
 
         for (Long userId : userIds) {
             Integer roleInDb = userMapper.selectRoleByUserId(userId);
@@ -177,7 +176,7 @@ public class UserService {
      * @return
      */
     public String getNameByUserId(Long userId) {
-        log.info("enter getNameByUserId userId={}", userId);
+        JLog.info(String.format("enter getNameByUserId userId=%s", userId));
         return userMapper.selectNameByUserId(userId);
     }
 }

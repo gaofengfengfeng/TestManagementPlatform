@@ -8,7 +8,7 @@ import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.TestProjectService;
 import com.bjtu.testmanageplatform.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import com.bjtu.testmanageplatform.util.JLog;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +25,6 @@ import java.util.List;
  * @Date: 2019-07-18
  * @Description:
  */
-@Slf4j
 @RestController
 @RequestMapping(value = "/v1/project")
 public class TestProjectController {
@@ -53,7 +52,7 @@ public class TestProjectController {
     public CreateProjectResponse create(HttpServletRequest request,
                                         @RequestBody @Valid CreateProjectReq CreateProjectReq) {
         CreateProjectReq.CreateProjectData createProjectData = CreateProjectReq.getData();
-        log.info("create project name={}", createProjectData.getName());
+        JLog.info(String.format("create project name=%s", createProjectData.getName()));
         CreateProjectResponse createProjectResponse = new CreateProjectResponse();
 
         // 查找该项目名称是否已经被占用了
@@ -98,8 +97,8 @@ public class TestProjectController {
     public JResponse changeStatus(HttpServletRequest request,
                                   @RequestBody @Valid ProjectStatusReq projectStatusReq) {
         ProjectStatusReq.ProjectStatusData projectStatusData = projectStatusReq.getData();
-        log.info("change project status prokectId={} new status={}",
-                projectStatusData.getProject_id(), projectStatusData.getStatus());
+        JLog.info(String.format("change project status prokectId=%s new status=%s",
+                projectStatusData.getProject_id(), projectStatusData.getStatus()));
 
         JResponse jResponse = new JResponse();
         // 如果待更改状态不在status状态范围内，则返回报错信息
@@ -141,7 +140,7 @@ public class TestProjectController {
     public JResponse assignTester(HttpServletRequest request,
                                   @RequestBody @Valid AssignTesterReq assignTesterReq) {
         AssignTesterReq.AssignTesterData assignTesterData = assignTesterReq.getData();
-        log.info("assignTester projectId={}", assignTesterData.getProject_id());
+        JLog.info(String.format("assignTester projectId=%s", assignTesterData.getProject_id()));
         JResponse jResponse = new JResponse();
 
         // 判断该项目是否存在
@@ -186,7 +185,7 @@ public class TestProjectController {
     public ProjectListResponse list(HttpServletRequest request,
                                     @Valid @RequestBody JRequest jRequest) {
         UserProfile userProfile = jRequest.getUser_profile();
-        log.info("project list userId={}", userProfile.getUser_id());
+        JLog.info(String.format("project list userId=%s", userProfile.getUser_id()));
         ProjectListResponse projectListResponse = new ProjectListResponse();
 
         // 需要根据不同的用户角色拉取相应的项目列表，比如 测试单位负责人、被测单位项目负责人的记录存在test_project表中
@@ -228,7 +227,7 @@ public class TestProjectController {
     public TemplateResponse template(HttpServletRequest request,
                                      @Valid @RequestBody TemplateReq templateReq) {
         TemplateReq.TemplateData templateData = templateReq.getData();
-        log.info("template projectId={}", templateData.getProject_id());
+        JLog.info(String.format("template projectId=%s", templateData.getProject_id()));
         TemplateResponse templateResponse = new TemplateResponse();
 
         // 判断该项目是否存在

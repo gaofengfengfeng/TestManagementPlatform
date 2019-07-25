@@ -6,8 +6,8 @@ import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.beans.base.TokenObject;
 import com.bjtu.testmanageplatform.beans.base.UserProfile;
 import com.bjtu.testmanageplatform.util.Generator;
+import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.service.JRedisPoolService;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -29,7 +29,6 @@ import java.lang.reflect.Method;
  * @Date: 2019-07-12
  * @Description:
  */
-@Slf4j
 @Aspect
 @Configuration
 public class WebLogicAspect {
@@ -55,7 +54,8 @@ public class WebLogicAspect {
 
         // 取出在JMessageConverter中放置的 _requestBody属性，里面是请求体字符串
         String requestBody = (String) request.getAttribute("_requestBody");
-        log.info(requestBody);
+        //log.info(requestBody);
+        JLog.info(requestBody);
         JRequest jRequest = JSON.parseObject(requestBody, JRequest.class);
 
         // 取得拦截方法的返回类型
@@ -92,7 +92,7 @@ public class WebLogicAspect {
     @AfterReturning(returning = "jResponse", pointcut = "webLogic()")
     public void doAfterReturning(JResponse jResponse) throws Throwable {
         jResponse.setResponse_time(System.currentTimeMillis());
-        log.info(JSON.toJSONString(jResponse));
+        JLog.info(JSON.toJSONString(jResponse));
     }
 
 }

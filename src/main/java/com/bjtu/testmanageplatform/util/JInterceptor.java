@@ -2,7 +2,6 @@ package com.bjtu.testmanageplatform.util;
 
 import com.alibaba.fastjson.JSON;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
  * @Date: 2019-07-13
  * @Description:
  */
-@Slf4j
 public class JInterceptor extends HandlerInterceptorAdapter {
     private final Class<? extends JResponse> jResponseClass;
 
@@ -33,6 +31,8 @@ public class JInterceptor extends HandlerInterceptorAdapter {
      **/
     public static boolean doPreHandle(HttpServletRequest request,
                                       Class<? extends JResponse> jResponseClass) {
+
+        JLog.resetLogId();
 
         request.setAttribute("beginReqUri", request.getRequestURI());
 
@@ -54,28 +54,28 @@ public class JInterceptor extends HandlerInterceptorAdapter {
      * @Description: 在请求完成时，打印相应的时间、错误号、notice日志等
      **/
     public static void doAfterCompletion(HttpServletRequest request) {
-        // Long reqStartTime = (Long) request.getAttribute("reqStartTime");
-        // Long reqEndTime = System.currentTimeMillis();
-        // Long reqCostTime = reqEndTime - reqStartTime;
-        //
-        // log.info("beginReqUri=" + request.getAttribute("beginReqUri"));
-        // log.info("endReqUri=" + request.getRequestURI());
-        // log.info("costTime=" + reqCostTime);
-        //
-        //
-        // JResponse jResponse = (JResponse) request.getAttribute("jResponse");
-        // log.info("errNo=" + jResponse.getErr_no());
-        // log.info("serverTime=" + jResponse.getResponse_time());
-        // if (jResponse.getResponse_time() == null || jResponse.getResponse_time().equals(0L)) {
-        //     log.warn("JResponse common param serverTime=null");
-        // }
-        //
-        // if (jResponse.getErr_no() != 0) {
-        //     log.warn("request occur some error. endReqUri=" + request.getRequestURI() + " errMsg" +
-        //             "=" + jResponse.getErr_msg(), jResponse.getErr_no());
-        // }
-        //
-        //log.info("responseBody=" + JSON.toJSONString(jResponse));
+        Long reqStartTime = (Long) request.getAttribute("reqStartTime");
+        Long reqEndTime = System.currentTimeMillis();
+        Long reqCostTime = reqEndTime - reqStartTime;
+
+        JLog.info("beginReqUri=" + request.getAttribute("beginReqUri"));
+        JLog.info("endReqUri=" + request.getRequestURI());
+        JLog.info("costTime=" + reqCostTime);
+
+
+        JResponse jResponse = (JResponse) request.getAttribute("jResponse");
+        JLog.info("errNo=" + jResponse.getErr_no());
+        JLog.info("serverTime=" + jResponse.getResponse_time());
+        if (jResponse.getResponse_time() == null || jResponse.getResponse_time().equals(0L)) {
+            JLog.warn("JResponse common param serverTime=null");
+        }
+
+        if (jResponse.getErr_no() != 0) {
+            JLog.warn("request occur some error. endReqUri=" + request.getRequestURI() + " errMsg" +
+                    "=" + jResponse.getErr_msg(), jResponse.getErr_no());
+        }
+
+        JLog.info("responseBody=" + JSON.toJSONString(jResponse));
     }
 
 
