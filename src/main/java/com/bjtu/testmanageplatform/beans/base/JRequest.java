@@ -11,5 +11,4 @@ import lombok.Data;
 public class JRequest {
     private Long request_time;
     private String token;
-    private UserProfile user_profile;
 }

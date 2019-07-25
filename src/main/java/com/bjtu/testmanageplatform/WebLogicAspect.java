@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.bjtu.testmanageplatform.beans.base.JRequest;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.beans.base.TokenObject;
-import com.bjtu.testmanageplatform.beans.base.UserProfile;
 import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.service.JRedisPoolService;
@@ -65,11 +64,10 @@ public class WebLogicAspect {
 
         // 检查token是否与redis中的相同
         // 用户身份鉴权、token校验
-        // TokenObject tokenObject = Generator.parseToken(jRequest.getToken());
-        UserProfile userProfile = jRequest.getUser_profile();
+        TokenObject tokenObject = Generator.parseToken(jRequest.getToken());
 
         Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
-        String tokenInRedis = jedis.get(InitConfig.LOGIN_TOKEN_PRE + userProfile.getUser_id());
+        String tokenInRedis = jedis.get(InitConfig.LOGIN_TOKEN_PRE + tokenObject.getUserId());
 
         if (!jRequest.getToken().equals(tokenInRedis)) {
             JResponse jResponse = (JResponse) targetMethod.getReturnType().newInstance();
