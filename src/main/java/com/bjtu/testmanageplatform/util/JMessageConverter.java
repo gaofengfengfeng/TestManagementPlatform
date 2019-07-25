@@ -2,15 +2,12 @@ package com.bjtu.testmanageplatform.util;
 
 import com.alibaba.fastjson.JSON;
 import com.bjtu.testmanageplatform.beans.base.JRequest;
-import com.bjtu.testmanageplatform.beans.base.JResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,7 +24,6 @@ import java.util.List;
  * @Date: 2019-07-13
  * @Description:
  */
-@Slf4j
 public class JMessageConverter implements HttpMessageConverter {
 
     List<MediaType> supportedMediaTypes;
@@ -56,7 +52,7 @@ public class JMessageConverter implements HttpMessageConverter {
     @Override
     public Object read(Class aClass, HttpInputMessage httpInputMessage) throws IOException,
             HttpMessageNotReadableException {
-        log.info("calling JMessageConverter.read");
+        JLog.info("calling JMessageConverter.read");
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ServletRequestAttributes servletRequestAttributes =
                 (ServletRequestAttributes) requestAttributes;
@@ -78,7 +74,7 @@ public class JMessageConverter implements HttpMessageConverter {
             }
 
             String body = new String(buffer, Charset.forName("utf-8"));
-            log.info("reqBody is" + body);
+            JLog.info("reqBody is" + body);
             request.setAttribute("_requestBody", body);
 
             object = JSON.parseObject(body, aClass);

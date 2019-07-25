@@ -12,8 +12,8 @@ import com.bjtu.testmanageplatform.model.StandardLibrary;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
+import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.SmsUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,6 @@ import java.util.List;
  * @Date: 2019-07-18
  * @Description:
  */
-@Slf4j
 @Service
 public class TestProjectService {
 
@@ -58,7 +57,7 @@ public class TestProjectService {
      * @return
      */
     public TestProject selectByName(String name) {
-        log.info("enter select project by name. name={}", name);
+        JLog.info(String.format("enter select project by name. name={}", name));
         return testProjectMapper.selectByName(name.trim());
     }
 
@@ -70,7 +69,7 @@ public class TestProjectService {
      * @return
      */
     public TestProject selectByProjectId(Long projectId) {
-        log.info("enter selectByProjectId projectId={}", projectId);
+        JLog.info(String.format("enter selectByProjectId projectId={}", projectId));
         return testProjectMapper.selectByProjectId(projectId);
     }
 
@@ -83,12 +82,12 @@ public class TestProjectService {
      * @return
      */
     public Long create(TestProject testProject) {
-        log.info("enter create project name={}", testProject.getName());
+        JLog.info(String.format("enter create project name={}", testProject.getName()));
 
         // 查找一个测试单位负责人，如果没有负责人则创建失败
         List<User> testLeaders = userMapper.selectByRole(User.Role.TEST_LEADER);
         if (testLeaders == null || testLeaders.size() == 0) {
-            log.error("no test leader available");
+            JLog.error("no test leader available", 101190152);
             return 0L;
         }
 
@@ -123,11 +122,12 @@ public class TestProjectService {
     public Boolean changeProjectStatus(TestProject testProject, Integer newStatus) {
 
         Integer oldStatus = testProject.getStatus();
-        log.info("changePojectStatus oldStatus={} newStatus={}", oldStatus, newStatus);
+        JLog.info(String.format("changePojectStatus oldStatus={} newStatus={}", oldStatus,
+                newStatus));
 
         // 判断新状态是否是可达状态
         if (!stateMachineService.isReachable(oldStatus, newStatus)) {
-            log.info("unreachable status");
+            JLog.info("unreachable status");
             return false;
         }
 
@@ -150,7 +150,7 @@ public class TestProjectService {
      */
     @Transactional
     public Boolean assignTester(Long projectId, List<Long> testIds) {
-        log.info("assignTester projectId={}", projectId);
+        JLog.info(String.format("assignTester projectId={}", projectId));
 
         for (Long testerId : testIds) {
             ProjectTesterRelation projectTesterRelation = new ProjectTesterRelation();
@@ -177,7 +177,7 @@ public class TestProjectService {
      * @return
      */
     public List<TestProject> list(Long userId, Integer role) {
-        log.info("enter project list userId={} role={}", userId, role);
+        JLog.info(String.format("enter project list userId={} role={}", userId, role));
 
         // 根据不同用户角色调用不同查找项目的方法
         if (role.equals(User.Role.UNDER_TEST_LEADER)) {
@@ -204,8 +204,8 @@ public class TestProjectService {
      * @return
      */
     public String getTemplate(TestProject testProject) {
-        log.info("enter getTemplate projectId={} rank={}", testProject.getProject_id(),
-                testProject.getRank());
+        JLog.info(String.format("enter getTemplate projectId={} rank={}",
+                testProject.getProject_id(), testProject.getRank()));
 
         // 拿到项目的定级并解析
         String rank = testProject.getRank();

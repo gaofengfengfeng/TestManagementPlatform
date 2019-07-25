@@ -22,18 +22,15 @@ public class SmsUtil {
             result = singleSender.sendWithParam("86", phone, templateId, params, SMS_SIGN, "",
                     "");
         } catch (Exception e) {
-            // JLog.error("send msg exception phone=" + phone, 100022145);
-            System.out.println("send msg exception phone=" + phone);
+            JLog.error("send msg exception phone=" + phone, 100022145);
             e.printStackTrace();
             return false;
         }
         if (result.result == 0) {
-            // JLog.info("send msg success phone=" + phone);
-            System.out.println("send msg success phone=" + phone);
+            JLog.info("send msg success phone=" + phone);
             return true;
         } else {
-            // JLog.error("send msg failed phone=" + phone + " errMsg=" + result.errMsg, 100022149);
-            System.out.println("send msg failed phone=" + phone + " errMsg=" + result.errMsg);
+            JLog.error("send msg failed phone=" + phone + " errMsg=" + result.errMsg, 100022149);
             return false;
         }
     }

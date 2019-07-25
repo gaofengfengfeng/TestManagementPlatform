@@ -3,7 +3,6 @@ package com.bjtu.testmanageplatform.util;
 import com.alibaba.fastjson.JSON;
 import com.bjtu.testmanageplatform.InitConfig;
 import com.bjtu.testmanageplatform.beans.base.TokenObject;
-import lombok.Data;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

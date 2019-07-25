@@ -1,8 +1,5 @@
 package com.bjtu.testmanageplatform.util;
 
-
-import lombok.extern.slf4j.Slf4j;
-
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
@@ -16,7 +13,6 @@ import javax.crypto.spec.SecretKeySpec;
  * @Date: 2019-07-13
  * @Description:
  */
-@Slf4j
 public class AESUtil {
 
     private static final String ALG = "AES";
@@ -60,7 +56,7 @@ public class AESUtil {
             cipherText = Base64.getEncoder().encodeToString(cipherBytes);
             cipherText = URLEncoder.encode(cipherText, ENC);
         } catch (Exception e) {
-            log.warn("encrypt failed errorMsg=" + e.getMessage());
+            JLog.warn("encrypt failed errorMsg=" + e.getMessage());
         }
 
         return cipherText;
@@ -105,13 +101,13 @@ public class AESUtil {
             while (cipherText.contains("%") && i-- > 0) {
                 cipherText = URLDecoder.decode(cipherText, ENC);
             }
-            log.info("URLDecoder.decode cipherText=" + cipherText);
+            JLog.info("URLDecoder.decode cipherText=" + cipherText);
 
             byte[] cipherBytes = Base64.getDecoder().decode(cipherText.getBytes());
             byte[] plainBytes = doDecrypt(secret, cipherBytes);
             plainText = new String(plainBytes, ENC);
         } catch (Exception e) {
-            log.warn("decrypt failed errorMsg=" + e.getMessage());
+            JLog.warn("decrypt failed errorMsg=" + e.getMessage());
         }
 
         return plainText;
