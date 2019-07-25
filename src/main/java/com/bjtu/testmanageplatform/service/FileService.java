@@ -61,10 +61,10 @@ public class FileService {
             fileOutputStream = new FileOutputStream(targetFile);
             IOUtils.copy(file.getInputStream(), fileOutputStream);
             BackUri = getCompleteUri(fileNameAfterMd5);
-            JLog.info(String.format("file:{} uploaded successfully", originFilename));
+            JLog.info(String.format("file:%s uploaded successfully", originFilename));
         } catch (IOException e) {
             BackUri = null;
-            JLog.info(String.format("file:{} uploaded failed", originFilename));
+            JLog.info(String.format("file:%s uploaded failed", originFilename));
             return BackUri;
         }
         return BackUri;

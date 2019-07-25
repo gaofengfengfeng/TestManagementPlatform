@@ -71,7 +71,7 @@ public class UserService {
      * @return
      */
     public Boolean create(User user) {
-        JLog.info(String.format("enter create user phone={}", user.getPhone()));
+        JLog.info(String.format("enter create user phone=%s", user.getPhone()));
         // 按照公私钥解析出密码，对其进行加盐，然后进行md5
         String decryptedPassword = Encryption.decryptData(user.getPassword(),
                 InitConfig.Const.privateKey);
@@ -89,11 +89,11 @@ public class UserService {
         // 插入数据库
         Integer affect = userMapper.save(user);
         if (affect.equals(1)) {
-            JLog.info(String.format("user save success userId={} phone={}", user.getUserId(),
+            JLog.info(String.format("user save success userId=%s phone=%s", user.getUserId(),
                     user.getPhone()));
             return true;
         } else {
-            JLog.error(String.format("user save failed userId={} phone={} errNo=101110127",
+            JLog.error(String.format("user save failed userId=%s phone=%s errNo=101110127",
                     user.getUserId(), user.getPhone()), 101110127);
             return false;
         }
@@ -128,7 +128,7 @@ public class UserService {
      * @return
      */
     public List<RetriveUserResponse.RetriveUserResData> getUsersByRole(Integer role) {
-        JLog.info(String.format("enter getUsersByRole role={}", role));
+        JLog.info(String.format("enter getUsersByRole role=%s", role));
         List<User> users = userMapper.selectByRole(role);
 
         List<RetriveUserResponse.RetriveUserResData> retriveUserResDataList = new ArrayList<>();
@@ -156,7 +156,7 @@ public class UserService {
      * @return
      */
     public Boolean checkUserRole(List<Long> userIds, Integer role) {
-        JLog.info(String.format("enter checkUserRole role={}", role));
+        JLog.info(String.format("enter checkUserRole role=%s", role));
 
         for (Long userId : userIds) {
             Integer roleInDb = userMapper.selectRoleByUserId(userId);
@@ -176,7 +176,7 @@ public class UserService {
      * @return
      */
     public String getNameByUserId(Long userId) {
-        JLog.info(String.format("enter getNameByUserId userId={}", userId));
+        JLog.info(String.format("enter getNameByUserId userId=%s", userId));
         return userMapper.selectNameByUserId(userId);
     }
 }

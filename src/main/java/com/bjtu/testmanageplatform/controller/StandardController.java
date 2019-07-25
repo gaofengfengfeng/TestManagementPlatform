@@ -46,7 +46,7 @@ public class StandardController {
     public JResponse create(HttpServletRequest request,
                             @Valid @RequestBody CreateStandardReq createStandardReq) {
         CreateStandardReq.CreateStandardData createStandardData = createStandardReq.getData();
-        JLog.info(String.format("create standard {}", createStandardData.toString()));
+        JLog.info(String.format("create standard %s", createStandardData.toString()));
         JResponse jResponse = new JResponse();
 
         // 判断该条记录是否已经存在，如果存在则更新，如果不存在则插入
@@ -86,8 +86,8 @@ public class StandardController {
     public StandardListResponse list(HttpServletRequest request,
                                      @RequestBody @Valid StandardListReq standardListReq) {
         StandardListReq.StandardListData standardListData = standardListReq.getData();
-        JLog.info(String.format("standard list standardRank={} headline_rank={} " +
-                        "secondary_headline_rank={}", standardListData.getStandard_rank(),
+        JLog.info(String.format("standard list standardRank=%s headline_rank=%s " +
+                        "secondary_headline_rank=%s", standardListData.getStandard_rank(),
                 standardListData.getHeadline_rank(),
                 standardListData.getSecondary_headline_rank()));
         StandardListResponse standardListResponse = new StandardListResponse();

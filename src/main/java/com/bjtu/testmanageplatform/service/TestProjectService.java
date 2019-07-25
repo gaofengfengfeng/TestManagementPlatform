@@ -57,7 +57,7 @@ public class TestProjectService {
      * @return
      */
     public TestProject selectByName(String name) {
-        JLog.info(String.format("enter select project by name. name={}", name));
+        JLog.info(String.format("enter select project by name. name=%s", name));
         return testProjectMapper.selectByName(name.trim());
     }
 
@@ -69,7 +69,7 @@ public class TestProjectService {
      * @return
      */
     public TestProject selectByProjectId(Long projectId) {
-        JLog.info(String.format("enter selectByProjectId projectId={}", projectId));
+        JLog.info(String.format("enter selectByProjectId projectId=%s", projectId));
         return testProjectMapper.selectByProjectId(projectId);
     }
 
@@ -82,7 +82,7 @@ public class TestProjectService {
      * @return
      */
     public Long create(TestProject testProject) {
-        JLog.info(String.format("enter create project name={}", testProject.getName()));
+        JLog.info(String.format("enter create project name=%s", testProject.getName()));
 
         // 查找一个测试单位负责人，如果没有负责人则创建失败
         List<User> testLeaders = userMapper.selectByRole(User.Role.TEST_LEADER);
@@ -122,7 +122,7 @@ public class TestProjectService {
     public Boolean changeProjectStatus(TestProject testProject, Integer newStatus) {
 
         Integer oldStatus = testProject.getStatus();
-        JLog.info(String.format("changePojectStatus oldStatus={} newStatus={}", oldStatus,
+        JLog.info(String.format("changePojectStatus oldStatus=%s newStatus=%s", oldStatus,
                 newStatus));
 
         // 判断新状态是否是可达状态
@@ -150,7 +150,7 @@ public class TestProjectService {
      */
     @Transactional
     public Boolean assignTester(Long projectId, List<Long> testIds) {
-        JLog.info(String.format("assignTester projectId={}", projectId));
+        JLog.info(String.format("assignTester projectId=%s", projectId));
 
         for (Long testerId : testIds) {
             ProjectTesterRelation projectTesterRelation = new ProjectTesterRelation();
@@ -177,7 +177,7 @@ public class TestProjectService {
      * @return
      */
     public List<TestProject> list(Long userId, Integer role) {
-        JLog.info(String.format("enter project list userId={} role={}", userId, role));
+        JLog.info(String.format("enter project list userId=%s role=%s", userId, role));
 
         // 根据不同用户角色调用不同查找项目的方法
         if (role.equals(User.Role.UNDER_TEST_LEADER)) {
@@ -204,7 +204,7 @@ public class TestProjectService {
      * @return
      */
     public String getTemplate(TestProject testProject) {
-        JLog.info(String.format("enter getTemplate projectId={} rank={}",
+        JLog.info(String.format("enter getTemplate projectId=%s rank=%s",
                 testProject.getProject_id(), testProject.getRank()));
 
         // 拿到项目的定级并解析

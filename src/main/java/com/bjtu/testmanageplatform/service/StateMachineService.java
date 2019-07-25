@@ -22,7 +22,7 @@ public class StateMachineService {
      * @return
      */
     public Boolean isReachable(Integer oldStatus, Integer newStatus) {
-        JLog.info(String.format("enter isReachable oldStatus={} newStatus={}", oldStatus,
+        JLog.info(String.format("enter isReachable oldStatus=%s newStatus=%s", oldStatus,
                 newStatus));
 
         // 如果项目已经达到终态，则不再支持状态改变，返回false
@@ -56,7 +56,7 @@ public class StateMachineService {
      * @return
      */
     private Boolean isTerminated(Integer status) {
-        JLog.info(String.format("isTerminated status={}", status));
+        JLog.info(String.format("isTerminated status=%s", status));
         // 如果项目被取消，或者项目已经测试通过，则说明项目已经到达终态
         if (status.equals(TestProject.Status.TEST_PASSED) ||
                 status.equals(TestProject.Status.PROJECT_CANCELED)) {
@@ -75,7 +75,7 @@ public class StateMachineService {
      * @return
      */
     private Boolean isGradeMaterialAuditFailed(Integer oldStatus, Integer newStatus) {
-        JLog.info(String.format("isGradeMaterialAuditFailed oldStatus={} newStatus={}", oldStatus
+        JLog.info(String.format("isGradeMaterialAuditFailed oldStatus=%s newStatus=%s", oldStatus
                 , newStatus));
         if (oldStatus.equals(TestProject.Status.GRADE_MATERIAL_AUDIT_FAILED)) {
             if (newStatus.equals(TestProject.Status.GRADE_MATERIAL_AUDIT_ING) ||
@@ -100,7 +100,7 @@ public class StateMachineService {
      * @return
      */
     private Boolean isFilingFaild(Integer oldStatus, Integer newStatus) {
-        JLog.info(String.format("isFilingFaild oldStatus={} newStatus={}", oldStatus, newStatus));
+        JLog.info(String.format("isFilingFaild oldStatus=%s newStatus=%s", oldStatus, newStatus));
         if (oldStatus.equals(TestProject.Status.FILING_FAILED)) {
             if (newStatus.equals(TestProject.Status.ON_FILE) ||
                     newStatus.equals(TestProject.Status.FILING_PASSES) ||

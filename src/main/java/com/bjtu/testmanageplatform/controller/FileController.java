@@ -25,7 +25,7 @@ public class FileController {
      */
     @RequestMapping(value = "/upload")
     public FileUploadResponse upload(MultipartFile file, HttpServletRequest request) {
-        JLog.info(String.format("upload file:{}", file.getOriginalFilename()));
+        JLog.info(String.format("upload file:%s", file.getOriginalFilename()));
         FileUploadResponse fileUploadResponse = new FileUploadResponse();
         String BackUri = fileService.upload(file);
 

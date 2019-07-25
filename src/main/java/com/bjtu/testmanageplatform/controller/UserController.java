@@ -48,7 +48,7 @@ public class UserController {
     public LoginResponse doLogin(HttpServletRequest request,
                                  @RequestBody @Valid LoginReq loginReq) {
         LoginReq.LoginData loginData = loginReq.getData();
-        JLog.info(String.format("login username={}", loginData.getUsername()));
+        JLog.info(String.format("login username=%s", loginData.getUsername()));
         LoginResponse loginResponse = new LoginResponse();
 
         // 判断是否存在该用户
@@ -71,7 +71,7 @@ public class UserController {
                 user.getPhone());
         try {
             Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
-            JLog.info(String.format("key={} token={}",
+            JLog.info(String.format("key={} token=%s",
                     InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), token));
             jedis.setex(InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), InitConfig.ONE_DAY_EXPIRE,
                     token);
@@ -103,7 +103,7 @@ public class UserController {
     public JResponse assignUser(HttpServletRequest request,
                                 @RequestBody @Valid AssignUserReq assignUserReq) {
         AssignUserReq.AssignUserData assignUserData = assignUserReq.getData();
-        JLog.info(String.format("assignUser username={} name={} phone={}",
+        JLog.info(String.format("assignUser username=%s name=%s phone=%s",
                 assignUserData.getUsername(), assignUserData.getName(), assignUserData.getPhone()));
         JResponse jResponse = new JResponse();
         // 用户身份鉴别
@@ -181,7 +181,7 @@ public class UserController {
     public RetriveUserResponse getUserByRole(HttpServletRequest request,
                                              @RequestBody @Valid RetriveUserReq retriveUserReq) {
         RetriveUserReq.RetriveUserData retriveUserData = retriveUserReq.getData();
-        JLog.info(String.format("getUserByRole role={}", retriveUserData.getRole()));
+        JLog.info(String.format("getUserByRole role=%s", retriveUserData.getRole()));
         RetriveUserResponse retriveUserResponse = new RetriveUserResponse();
 
         // 查找数据库，根据role查找，使user方法直接返回封装好的RetriveUserResData List
