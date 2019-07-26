@@ -3,12 +3,13 @@ package com.bjtu.testmanageplatform.controller;
 import com.bjtu.testmanageplatform.beans.*;
 import com.bjtu.testmanageplatform.beans.base.JRequest;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
+import com.bjtu.testmanageplatform.beans.base.TokenObject;
 import com.bjtu.testmanageplatform.model.ProjectMaterial;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.service.MaterialService;
 import com.bjtu.testmanageplatform.service.TestProjectService;
+import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping(value = "/v1/material")
 public class MaterialController {
@@ -36,9 +36,9 @@ public class MaterialController {
     @RequestMapping(value = "/upload")
     public JResponse upload(HttpServletRequest request,
                             @Valid @RequestBody MaterialUploadReq MaterialUploadReq){
+        TokenObject tokenObject = Generator.parseToken(MaterialUploadReq.getToken());
         MaterialUploadReq.MaterialUploadData materialUploadData = MaterialUploadReq.getData();
         JLog.info(String.format("upload material projectid=%s type=%s" , materialUploadData.getProject_id() , materialUploadData.getType()));
-        //log.info("upload material projectid={} type={}" ,materialUploadData.getProject_id() ,materialUploadData.getType());
         JResponse jResponse = new JResponse();
 
         // 如果项目不存在返回报错信息
@@ -57,7 +57,7 @@ public class MaterialController {
         ProjectMaterial projectMaterial = new ProjectMaterial();
         BeanUtils.copyProperties(materialUploadData ,projectMaterial);
         projectMaterial.setVersion(newVersion);
-        projectMaterial.setCommitter_id(MaterialUploadReq.getUser_profile().getUser_id());
+        projectMaterial.setCommitter_id(tokenObject.getUserId());
 
         int result = materialService.upload(projectMaterial);
         if(result == 0){
@@ -73,9 +73,9 @@ public class MaterialController {
     public MaterialListResponse list(HttpServletRequest request,
                           @Valid @RequestBody MaterialListReq materialListReq){
         MaterialListReq.MaterialListData materialListData = materialListReq.getData();
+        TokenObject tokenObject = Generator.parseToken(materialListReq.getToken());
         JLog.info(String.format("material list projectid=%s userid=%s"
-                ,materialListData.getProject_id(), materialListReq.getUser_profile().getUser_id()));
-        //log.info("material list projectid={} userid={}", materialListData.getProject_id(), materialListReq.getUser_profile().getUser_id());
+                ,materialListData.getProject_id(), tokenObject.getUserId()));
         MaterialListResponse materialListResponse = new MaterialListResponse();
 
         // 如果项目不存在返回报错信息
@@ -96,9 +96,9 @@ public class MaterialController {
     public JResponse update(HttpServletRequest request,
                          @Valid @RequestBody MaterialUpdateReq materialUpdateReq){
         MaterialUpdateReq.MaterialUpdateData materialUpdateData = materialUpdateReq.getData();
+        TokenObject tokenObject = Generator.parseToken(materialUpdateReq.getToken());
         JLog.info(String.format("update material projectid={} materialid={} type={} userid={}"
-                ,materialUpdateData.getProject_id(),materialUpdateData.getMaterial_id(),materialUpdateData.getType(),materialUpdateReq.getUser_profile().getUser_id()));
-        //log.info("update material projectid={} materialid={} type={} userid={}",materialUpdateData.getProject_id(),materialUpdateData.getMaterial_id(),materialUpdateData.getType(),materialUpdateReq.getUser_profile().getUser_id());
+                ,materialUpdateData.getProject_id(),materialUpdateData.getMaterial_id(),materialUpdateData.getType(),tokenObject.getUserId()));
         JResponse jResponse = new JResponse();
 
         ProjectMaterial projectMaterial = materialService.getMaterialById(materialUpdateData.getMaterial_id());
@@ -138,9 +138,9 @@ public class MaterialController {
     public JResponse aduit(HttpServletRequest request,
                         @Valid @RequestBody MaterialAduitReq materialAduitReq){
         MaterialAduitReq.MaterialAduitData materialAduitData = materialAduitReq.getData();
+        TokenObject tokenObject = Generator.parseToken(materialAduitReq.getToken());
         JLog.info(String.format("audit materialid=%s by userid=%s"
-                , materialAduitData.getMaterial_id(), materialAduitReq.getUser_profile().getUser_id()));
-        //log.info("audit materialid={} by userid={}", materialAduitData.getMaterial_id(), materialAduitReq.getUser_profile().getUser_id());
+                , materialAduitData.getMaterial_id(), tokenObject.getUserId()));
         JResponse jResponse = new JResponse();
 
         ProjectMaterial projectMaterial = materialService.getMaterialById(materialAduitData.getMaterial_id());
@@ -168,7 +168,7 @@ public class MaterialController {
             jResponse.setErr_no(101400008);
             jResponse.setErr_msg("db error or test status can not change");
             JLog.error(String.format("user save failed userId=%s phone=%s errNo=101400008",
-                    materialAduitReq.getUser_profile().getUser_id()), 101400008);
+                    tokenObject.getUserId()), 101400008);
             return jResponse;
         }
 

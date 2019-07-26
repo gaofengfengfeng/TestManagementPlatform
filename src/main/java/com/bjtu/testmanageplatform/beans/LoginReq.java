@@ -1,7 +1,6 @@
 package com.bjtu.testmanageplatform.beans;
 
 import com.bjtu.testmanageplatform.beans.base.JRequest;
-import com.bjtu.testmanageplatform.beans.base.UserProfile;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;

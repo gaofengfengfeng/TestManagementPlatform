@@ -73,10 +73,10 @@ public class UserService {
     public Boolean create(User user) {
         JLog.info(String.format("enter create user phone=%s", user.getPhone()));
         // 按照公私钥解析出密码，对其进行加盐，然后进行md5
-        String decryptedPassword = Encryption.decryptData(user.getPassword(),
-                InitConfig.Const.privateKey);
+        // String decryptedPassword = Encryption.decryptData(user.getPassword(),
+        //         InitConfig.Const.privateKey);
         String salt = Generator.createSalt();
-        String md5Password = Conversion.getMD5(decryptedPassword + salt);
+        String md5Password = Conversion.getMD5(user.getPassword() + salt);
 
         // 补充完善user实体对象属性
         user.setUserId(Generator.generateLongId());
@@ -109,10 +109,10 @@ public class UserService {
      */
     public Boolean checkPassword(String resourcePassword, User user) {
         // 传来的密码是被公钥加密过的，所以需要先用私钥解密
-        String decryptedPassword = Encryption.decryptData(resourcePassword,
-                InitConfig.Const.privateKey);
+        // String decryptedPassword = Encryption.decryptData(resourcePassword,
+        //         InitConfig.Const.privateKey);
         // 将解密出来的密码加盐之后md5
-        String md5Password = Conversion.getMD5(decryptedPassword + user.getSalt());
+        String md5Password = Conversion.getMD5(resourcePassword + user.getSalt());
         // 判断两个密码是否相等返回结果
         if (md5Password.equals(user.getPassword())) {
             return true;

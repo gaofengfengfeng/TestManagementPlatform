@@ -3,7 +3,7 @@ package com.bjtu.testmanageplatform.controller;
 import com.bjtu.testmanageplatform.InitConfig;
 import com.bjtu.testmanageplatform.beans.*;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
-import com.bjtu.testmanageplatform.beans.base.UserProfile;
+import com.bjtu.testmanageplatform.beans.base.TokenObject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.UserService;
 import com.bjtu.testmanageplatform.util.Encryption;
@@ -107,8 +107,8 @@ public class UserController {
                 assignUserData.getUsername(), assignUserData.getName(), assignUserData.getPhone()));
         JResponse jResponse = new JResponse();
         // 用户身份鉴别
-        UserProfile userProfile = assignUserReq.getUser_profile();
-        Integer role = userService.getRoleByUserId(userProfile.getUser_id());
+        TokenObject tokenObject = Generator.parseToken(assignUserReq.getToken());
+        Integer role = userService.getRoleByUserId(tokenObject.getUserId());
         if (!role.equals(User.Role.SYSTEM_ADMINISTRATOR)) {
             // 非系统管理员返回错误
             jResponse.setErr_no(101090910);
@@ -159,7 +159,7 @@ public class UserController {
         // 构建实体对象，进入业务逻辑
         User user = new User();
         user.setUsername("administrator");
-        user.setPassword(Encryption.encryptedData("123456", InitConfig.Const.publicKey));
+        user.setPassword("123456");
         user.setName("冯凤娟");
         user.setPhone("17801020888");
         user.setDepartment("铁路总局");

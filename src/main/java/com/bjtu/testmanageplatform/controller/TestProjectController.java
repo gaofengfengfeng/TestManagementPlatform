@@ -3,11 +3,12 @@ package com.bjtu.testmanageplatform.controller;
 import com.bjtu.testmanageplatform.beans.*;
 import com.bjtu.testmanageplatform.beans.base.JRequest;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
-import com.bjtu.testmanageplatform.beans.base.UserProfile;
+import com.bjtu.testmanageplatform.beans.base.TokenObject;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.TestProjectService;
 import com.bjtu.testmanageplatform.service.UserService;
+import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +45,15 @@ public class TestProjectController {
      * 创建一个测试项目
      *
      * @param request
-     * @param CreateProjectReq
+     * @param createProjectReq
      *
      * @return
      */
     @RequestMapping(value = "/create")
     public CreateProjectResponse create(HttpServletRequest request,
-                                        @RequestBody @Valid CreateProjectReq CreateProjectReq) {
-        CreateProjectReq.CreateProjectData createProjectData = CreateProjectReq.getData();
+                                        @RequestBody @Valid CreateProjectReq createProjectReq) {
+        CreateProjectReq.CreateProjectData createProjectData = createProjectReq.getData();
+        TokenObject tokenObject = Generator.parseToken(createProjectReq.getToken());
         JLog.info(String.format("create project name=%s", createProjectData.getName()));
         CreateProjectResponse createProjectResponse = new CreateProjectResponse();
 
@@ -67,7 +69,7 @@ public class TestProjectController {
         TestProject testProject = new TestProject();
         BeanUtils.copyProperties(createProjectData, testProject);
         testProject.setName(createProjectData.getName().trim());
-        testProject.setUnder_test_leader_id(CreateProjectReq.getUser_profile().getUser_id());
+        testProject.setUnder_test_leader_id(tokenObject.getUserId());
 
         // 调用业务逻辑，创建对象
         Long projectId = testProjectService.create(testProject);
@@ -184,13 +186,13 @@ public class TestProjectController {
     @RequestMapping(value = "/list")
     public ProjectListResponse list(HttpServletRequest request,
                                     @Valid @RequestBody JRequest jRequest) {
-        UserProfile userProfile = jRequest.getUser_profile();
-        JLog.info(String.format("project list userId=%s", userProfile.getUser_id()));
+        TokenObject tokenObject = Generator.parseToken(jRequest.getToken());
+        JLog.info(String.format("project list userId=%s", tokenObject.getUserId()));
         ProjectListResponse projectListResponse = new ProjectListResponse();
 
         // 需要根据不同的用户角色拉取相应的项目列表，比如 测试单位负责人、被测单位项目负责人的记录存在test_project表中
         // 而实际测试人员和项目的关系则存在project_tester_relation表中
-        Integer role = userService.getRoleByUserId(userProfile.getUser_id());
+        Integer role = userService.getRoleByUserId(tokenObject.getUserId());
 
         // TODO: 目前只支持测试单位负责人、被测单位项目负责人、实际测试人员拉取项目列表
         if (!role.equals(User.Role.UNDER_TEST_LEADER) &&
@@ -201,7 +203,7 @@ public class TestProjectController {
             return projectListResponse;
         }
 
-        List<TestProject> testProjects = testProjectService.list(userProfile.getUser_id(), role);
+        List<TestProject> testProjects = testProjectService.list(tokenObject.getUserId(), role);
         List<ProjectListResponse.Project> projects = new ArrayList<>();
         for (TestProject testProject : testProjects) {
             ProjectListResponse.Project project = new ProjectListResponse.Project();
