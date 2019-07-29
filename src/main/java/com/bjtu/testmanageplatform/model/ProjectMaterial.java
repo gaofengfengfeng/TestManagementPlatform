@@ -14,8 +14,10 @@ public class ProjectMaterial {
     private Long committer_id;
     private Integer type;
     private Integer status;
+    private Integer audit_status;
     private Integer version;
     private String remark;
+    private String discussion;
     private String file_url;
     private String content;
     private Long create_time;
@@ -26,8 +28,10 @@ public class ProjectMaterial {
         committer_id = 0L;
         type = Type.UNUSE;
         status = TestProject.Status.UNUSE;
+        audit_status = Audit.UNUSE;
         version = 0;
         remark = "";
+        discussion = "";
         file_url = "";
         content = "";
         create_time = System.currentTimeMillis();
@@ -43,5 +47,11 @@ public class ProjectMaterial {
         public final static Integer GRADE_AUDIT_MATERIAL = 3; // 定级审核材料
         public final static Integer ASSESSMENT_REPORT = 4; // 测评报告
         public final static Integer PLAN_OF_RECTIFICATION = 5; // 整改方案
+    }
+
+    public static class Audit{
+        public final static Integer UNUSE = 0;
+        public final static Integer NOPASS = 1;
+        public final static Integer PASS = 2;
     }
 }
