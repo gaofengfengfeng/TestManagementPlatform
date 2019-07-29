@@ -10,15 +10,12 @@ import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.SmsUtil;
-import jdk.tools.jlink.internal.Jlink;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 public class MaterialService {
 
@@ -49,7 +46,6 @@ public class MaterialService {
     }
 
     public int upload(ProjectMaterial projectMaterial){
-        //log.info("enter upload material projectid={} type={}" ,projectMaterial.getProject_id() ,projectMaterial.getType());
         JLog.info(String.format("enter upload material projectid=%s type=%s"
                 ,projectMaterial.getProject_id() ,projectMaterial.getType()));
 
@@ -59,7 +55,6 @@ public class MaterialService {
     }
 
     public List<MaterialListResponse.Material> getMaterialByProjectId(Long projectId){
-        //log.info("enter getMaterialByProjectId projectid={}", projectId);
         JLog.info(String.format("enter getMaterialByProjectId projectid=%s", projectId));
         List<ProjectMaterial> materials = projectMaterialMapper.selectByProjectId(projectId) ;
 
@@ -67,7 +62,6 @@ public class MaterialService {
 
         for(ProjectMaterial projectMaterial: materials){
             MaterialListResponse.Material material = new MaterialListResponse.Material();
-            log.info(projectMaterial.getMaterial_id().toString());
             material.setMaterial_id(projectMaterial.getMaterial_id());
             material.setType(projectMaterial.getType());
             material.setStatus(projectMaterial.getStatus());
@@ -89,7 +83,6 @@ public class MaterialService {
     public Boolean update(Long material_id , String remark , String file_url , String content){
         if (remark.length() == 0)
             remark = null;
-        //log.info("update materialid={}", material_id);
         JLog.info(String.format("update materialid=%s", material_id));
         Integer result = projectMaterialMapper.update(material_id, remark, file_url, content);
         return (result == 1 ? true : false);
@@ -118,7 +111,6 @@ public class MaterialService {
         TestProject testProject = projectMaterialMapper.selectProjectById(project_id);
         Long underTestLeaderId = testProject.getUnder_test_leader_id();
         String testProjectName = testProject.getName();
-        //log.info("change projectid={} by materialid={}",testProject.getProject_id(),material_id);
         JLog.info(String.format("change projectid=%s by materialid=%s",testProject.getProject_id(),material_id));
 
         if(type == ProjectMaterial.Type.GRADE_AUDIT_MATERIAL){
