@@ -16,6 +16,15 @@ public class TemplateResponse extends JResponse {
     @Data
     public static class TemplateResData {
         private String content;
+        private String test_leader_name;
+        private Long test_leader_id;
+        private String under_test_leader_name;
+        private Long under_test_leader_id;
+        private Integer status;
+        private String project_location;
+        private String rank;
+        private Integer type;
+        private String name;
     }
 
 }

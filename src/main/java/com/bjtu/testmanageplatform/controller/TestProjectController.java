@@ -244,6 +244,9 @@ public class TestProjectController {
         String content = testProjectService.getTemplate(testProject);
 
         TemplateResponse.TemplateResData templateResData = new TemplateResponse.TemplateResData();
+        BeanUtils.copyProperties(testProject, templateResData);
+        templateResData.setUnder_test_leader_name(userService.getNameByUserId(testProject.getUnder_test_leader_id()));
+        templateResData.setTest_leader_name(userService.getNameByUserId(testProject.getTest_leader_id()));
         templateResData.setContent(content);
         templateResponse.setData(templateResData);
 
