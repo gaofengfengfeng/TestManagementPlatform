@@ -26,5 +26,6 @@ public class ProjectListResponse extends JResponse {
         private String project_location;
         private String rank;
         private Integer type;
+        private String name;
     }
 }
