@@ -69,18 +69,23 @@ public class UserController {
         // 密码正确生成token，将生成的token存入redis key值为user_id，value则为生成的token
         String token = Generator.generateToken(user.getUsername(), user.getUserId(),
                 user.getPhone());
+        Jedis jedis = null;
         try {
-            Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
+            jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
             JLog.info(String.format("key={} token=%s",
                     InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), token));
             jedis.setex(InitConfig.LOGIN_TOKEN_PRE + user.getUserId(), InitConfig.ONE_DAY_EXPIRE,
                     token);
-
+            jedis.close();
         } catch (Exception e) {
             JLog.error(e.getMessage(), 101241317);
             loginResponse.setErr_no(101241317);
             loginResponse.setErr_msg("redis error");
             return loginResponse;
+        } finally {
+            try {
+                jedis.close();
+            } catch (Exception e) {}
         }
 
 

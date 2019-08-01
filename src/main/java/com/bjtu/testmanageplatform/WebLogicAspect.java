@@ -66,8 +66,23 @@ public class WebLogicAspect {
         // 用户身份鉴权、token校验
         TokenObject tokenObject = Generator.parseToken(jRequest.getToken());
 
-        Jedis jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
-        String tokenInRedis = jedis.get(InitConfig.LOGIN_TOKEN_PRE + tokenObject.getUserId());
+        Jedis jedis = null;
+        String tokenInRedis = "";
+        try {
+            jedis = JRedisPoolService.getInstance(InitConfig.REDIS_POOL);
+            tokenInRedis = jedis.get(InitConfig.LOGIN_TOKEN_PRE + tokenObject.getUserId());
+            jedis.close();
+        } catch (Exception e) {
+            JResponse jResponse = (JResponse) targetMethod.getReturnType().newInstance();
+            JLog.error(e.getMessage(), 101232111);
+            jResponse.setErr_no(101232111);
+            jResponse.setErr_msg("redis error");
+            return jResponse;
+        } finally {
+            try {
+                jedis.close();
+            } catch (Exception e) {}
+        }
 
         if (!jRequest.getToken().equals(tokenInRedis)) {
             JResponse jResponse = (JResponse) targetMethod.getReturnType().newInstance();
