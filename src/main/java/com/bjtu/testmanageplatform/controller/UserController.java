@@ -91,6 +91,7 @@ public class UserController {
 
         LoginResponse.LoginResData loginResData = new LoginResponse.LoginResData();
         loginResData.setToken(token);
+        loginResData.setRole(user.getRole());
         loginResponse.setData(loginResData);
 
         return loginResponse;

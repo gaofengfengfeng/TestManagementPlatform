@@ -15,6 +15,7 @@ public class LoginResponse extends JResponse {
 
     @Data
     public static class LoginResData {
+        private int role;
         private String token;
     }
 }
