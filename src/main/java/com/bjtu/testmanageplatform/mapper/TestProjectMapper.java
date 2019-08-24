@@ -19,9 +19,9 @@ import java.util.List;
 public interface TestProjectMapper {
 
     @Insert("INSERT INTO test_project(project_id, name, test_leader_id, under_test_leader_id, " +
-            "status, project_location_code, project_location, rank, type, create_time) VALUES" +
+            "status, project_location_code, project_location, project_rank, type, create_time) VALUES" +
             "(#{project_id}, #{name}, #{test_leader_id}, #{under_test_leader_id}, #{status}, " +
-            "#{project_location_code}, #{project_location}, #{rank}, #{type}, #{create_time})")
+            "#{project_location_code}, #{project_location}, #{project_rank}, #{type}, #{create_time})")
     Integer insert(TestProject testProject);
 
 

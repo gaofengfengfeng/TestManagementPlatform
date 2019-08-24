@@ -17,7 +17,7 @@ public class TestProject {
     private Integer status;
     private Integer project_location_code;
     private String project_location;
-    private String rank;
+    private String project_rank;
     private Integer type;
     private Long create_time;
 
@@ -28,7 +28,7 @@ public class TestProject {
         status = Status.UNUSE;
         project_location_code = 0;
         project_location = "";
-        rank = "";
+        project_rank = "";
         type = Type.UNUSE;
         create_time = System.currentTimeMillis();
     }

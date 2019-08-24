@@ -20,10 +20,10 @@ public interface StandardLibraryMapper {
 
 
     @Insert("INSERT INTO standard_library(standard_id, standard_rank, headline, " +
-            "secondary_headline, name, headline_rank, secondary_headline_rank, name_rank, rank, " +
+            "secondary_headline, name, headline_rank, secondary_headline_rank, name_rank, project_rank, " +
             "content, create_time) VALUES (#{standard_id}, #{standard_rank}, #{headline}, " +
             "#{secondary_headline}, #{name}, #{headline_rank}, #{secondary_headline_rank}, " +
-            "#{name_rank}, #{rank}, #{content}, #{create_time})")
+            "#{name_rank}, #{project_rank}, #{content}, #{create_time})")
     Integer create(StandardLibrary standardLibrary);
 
     @Select("SELECT * FROM standard_library WHERE headline_rank=#{0} AND " +
@@ -51,18 +51,18 @@ public interface StandardLibraryMapper {
             "headline_rank=#{headlineRank} ORDER BY secondary_headline_rank")
     List<StandardLibrary> selectSecondaryHeadlinesByRankAndHeadline(Integer headlineRank);
 
-    // @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND rank in #{0} AND " +
+    // @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND project_rank in #{0} AND " +
     //         "headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY name_rank")
     @Select({
             "<script>",
-            "SELECT * FROM standard_library where standard_rank=3 AND rank in",
-            "<foreach collection='rank' item='item' open='(' separator=',' close=')'>",
+            "SELECT * FROM standard_library where standard_rank=3 AND project_rank in",
+            "<foreach collection='project_rank' item='item' open='(' separator=',' close=')'>",
             "#{item}",
             "</foreach>",
             " AND headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY name_rank",
             "</script>"
     })
-    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadline(@Param("rank") String[] rank,
+    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadline(@Param("project_rank") String[] rank,
                                                                            Integer headlineRank,
                                                                            Integer secondaryHeadlineRank);
 

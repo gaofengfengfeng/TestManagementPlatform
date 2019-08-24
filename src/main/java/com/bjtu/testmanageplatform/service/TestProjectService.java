@@ -204,11 +204,11 @@ public class TestProjectService {
      * @return
      */
     public String getTemplate(TestProject testProject) {
-        JLog.info(String.format("enter getTemplate projectId=%s rank=%s",
-                testProject.getProject_id(), testProject.getRank()));
+        JLog.info(String.format("enter getTemplate projectId=%s project_rank=%s",
+                testProject.getProject_id(), testProject.getProject_rank()));
 
         // 拿到项目的定级并解析
-        String rank = testProject.getRank();
+        String rank = testProject.getProject_rank();
         String[] rankAfterSplit = rank.split(",");
 
         // 首先拿到一级标题
