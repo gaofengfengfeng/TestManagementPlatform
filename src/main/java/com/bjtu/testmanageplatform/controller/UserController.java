@@ -6,7 +6,6 @@ import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.beans.base.TokenObject;
 import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.service.UserService;
-import com.bjtu.testmanageplatform.util.Encryption;
 import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.service.JRedisPoolService;
@@ -51,6 +50,12 @@ public class UserController {
         JLog.info(String.format("login username=%s", loginData.getUsername()));
         LoginResponse loginResponse = new LoginResponse();
 
+        if (loginData.getUsername() == null || loginData.getUsername().equals("") ||
+                loginData.getPassword() == null || loginData.getPassword().equals("")) {
+            loginResponse.setErr_no(101240952);
+            loginResponse.setErr_msg("username or password can not be null");
+            return loginResponse;
+        }
         // 判断是否存在该用户
         User user = userService.getUserByUsername(loginData.getUsername());
         JLog.info(user.toString());
@@ -85,7 +90,8 @@ public class UserController {
         } finally {
             try {
                 jedis.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
 
