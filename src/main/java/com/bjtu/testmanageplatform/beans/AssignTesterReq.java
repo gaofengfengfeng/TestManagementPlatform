@@ -1,5 +1,6 @@
 package com.bjtu.testmanageplatform.beans;
 
+import com.bjtu.testmanageplatform.beans.base.JRequest;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @Description:
  */
 @Data
-public class AssignTesterReq {
+public class AssignTesterReq extends JRequest {
 
     private AssignTesterData data;
 
