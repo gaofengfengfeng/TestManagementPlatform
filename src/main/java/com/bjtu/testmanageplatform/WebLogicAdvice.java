@@ -1,11 +1,13 @@
 package com.bjtu.testmanageplatform;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.util.JLog;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Date: 2019-07-12
  * @Description: 异常处理类，捕获异常集中返回
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class WebLogicAdvice {
 
     @ExceptionHandler
@@ -27,9 +29,10 @@ public class WebLogicAdvice {
         } else {
             JLog.error(exception.getMessage(), 101121022);
             jResponse.setErr_no(101121022);
-            jResponse.setErr_msg("server busy");
+            jResponse.setErr_msg("server busy. exceptionMessage is " + exception.getMessage());
         }
         jResponse.setResponse_time(System.currentTimeMillis());
+        JLog.info(JSON.toJSONString(jResponse));
         return jResponse;
     }
 }
