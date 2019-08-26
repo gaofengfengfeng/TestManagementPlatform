@@ -16,5 +16,6 @@ public class MaterialListResponse extends JResponse {
         private Integer status;
         private String remark;
         private String content;
+        private String file_url;
     }
 }

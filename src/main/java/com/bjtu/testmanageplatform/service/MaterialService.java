@@ -67,6 +67,7 @@ public class MaterialService {
             material.setStatus(projectMaterial.getStatus());
             material.setContent(projectMaterial.getContent());
             material.setRemark(projectMaterial.getRemark());
+            material.setFile_url(projectMaterial.getFile_url());
             materialList.add(material);
         }
 
