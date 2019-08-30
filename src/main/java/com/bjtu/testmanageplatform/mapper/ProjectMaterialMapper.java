@@ -47,4 +47,7 @@ public interface ProjectMaterialMapper {
 
     @Update("UPDATE project_material SET audit_status=#{1} , discussion=#{2} where material_id=#{0}")
     Integer updateMaterial(Long materialId, Integer auditStatus, String discussion);
+
+    @Update("UPDATE project_material SET audit_status=#{1} where material_id=#{0}")
+    Integer updateMaterialStatus(Long materialId, Integer auditStatus);
 }

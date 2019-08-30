@@ -64,7 +64,7 @@ public class MaterialService {
             MaterialListResponse.Material material = new MaterialListResponse.Material();
             material.setMaterial_id(projectMaterial.getMaterial_id());
             material.setType(projectMaterial.getType());
-            material.setStatus(project.getStatus());
+            material.setStatus(projectMaterial.getAudit_status());
             material.setContent(projectMaterial.getContent());
             material.setRemark(projectMaterial.getRemark());
             material.setFile_url(projectMaterial.getFile_url());
