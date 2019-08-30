@@ -35,9 +35,9 @@ public class MaterialController {
 
     @RequestMapping(value = "/upload")
     public JResponse upload(HttpServletRequest request,
-                            @Valid @RequestBody MaterialUploadReq materialUploadReq){
-        TokenObject tokenObject = Generator.parseToken(materialUploadReq.getToken());
-        MaterialUploadReq.MaterialUploadData materialUploadData = materialUploadReq.getData();
+                            @Valid @RequestBody MaterialUploadReq MaterialUploadReq){
+        TokenObject tokenObject = Generator.parseToken(MaterialUploadReq.getToken());
+        MaterialUploadReq.MaterialUploadData materialUploadData = MaterialUploadReq.getData();
         JLog.info(String.format("upload material projectid=%s type=%s" , materialUploadData.getProject_id() , materialUploadData.getType()));
         JResponse jResponse = new JResponse();
 
