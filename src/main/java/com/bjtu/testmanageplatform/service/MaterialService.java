@@ -10,6 +10,7 @@ import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.SmsUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,7 @@ public class MaterialService {
             material.setContent(projectMaterial.getContent());
             material.setRemark(projectMaterial.getRemark());
             material.setFile_url(projectMaterial.getFile_url());
+            material.setCreate_time(projectMaterial.getCreate_time());
             materialList.add(material);
         }
 

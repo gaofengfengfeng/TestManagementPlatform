@@ -2,6 +2,7 @@ package com.bjtu.testmanageplatform.beans;
 
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import lombok.Data;
+
 import java.util.List;
 
 @Data
@@ -17,5 +18,6 @@ public class MaterialListResponse extends JResponse {
         private String remark;
         private String content;
         private String file_url;
+        private Long create_time;
     }
 }
