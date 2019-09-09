@@ -18,11 +18,13 @@ public class StandardListReq extends JRequest {
 
     @Data
     public static class StandardListData {
-        @Range(min = 1, max = 3)
+        @Range(min = 1, max = 4)
         private Integer standard_rank;
         @Range(min = 0)
         private Integer headline_rank;
         @Range(min = 0)
         private Integer secondary_headline_rank;
+        @Range(min = 0)
+        private Integer third_headline_rank;
     }
 }

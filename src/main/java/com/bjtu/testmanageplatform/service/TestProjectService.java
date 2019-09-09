@@ -219,17 +219,26 @@ public class TestProjectService {
                     standardLibraryMapper.selectSecondaryHeadlinesByRankAndHeadline(h.getHeadline_rank());
             JSONObject secondHeadline = new JSONObject();
             for (StandardLibrary sh : secondaryHeadlines) {
-                List<StandardLibrary> names =
-                        standardLibraryMapper.selectNamesByRankAndHeadlineAndSecondaryHeadline
+                List<StandardLibrary> thirdHeadlines =
+                        standardLibraryMapper.selectThirdHeadlinesByRankAndHeadlineAndSecondaryHeadline
                                 (rankAfterSplit, h.getHeadline_rank(),
                                         sh.getSecondary_headline_rank());
-                JSONObject contents = new JSONObject();
-                for (StandardLibrary name : names) {
-                    JSONObject content = new JSONObject();
-                    content.put("content", name.getContent());
-                    contents.put(name.getName(), content);
+                JSONObject thirdHeadline = new JSONObject();
+                for (StandardLibrary th : thirdHeadlines) {
+                    List<StandardLibrary> names =
+                            standardLibraryMapper.selectNamesByRankAndHeadlineAndSecondaryHeadlineAndThirdHeadline
+                                    (rankAfterSplit, h.getHeadline_rank(),
+                                            sh.getSecondary_headline_rank(),
+                                            th.getThird_headline_rank());
+                    JSONObject contents=new JSONObject();
+                    for(StandardLibrary name:names){
+                        JSONObject content=new JSONObject();
+                        content.put("content",name.getContent());
+                        contents.put(name.getName(),content);
+                    }
+                    thirdHeadline.put(sh.getThird_headline(), contents);
                 }
-                secondHeadline.put(sh.getSecondary_headline(), contents);
+                secondHeadline.put(sh.getSecondary_headline(), thirdHeadline);
             }
             firstHeadline.put(h.getHeadline(), secondHeadline);
         }
@@ -238,3 +247,4 @@ public class TestProjectService {
         return template;
     }
 }
+

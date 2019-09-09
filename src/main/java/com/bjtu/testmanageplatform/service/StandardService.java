@@ -34,10 +34,11 @@ public class StandardService {
      * @return
      */
     public StandardLibrary findByRank(Integer headlineRank, Integer secondaryHeadlineRank,
-                                      Integer nameRank) {
+                                      Integer thirdHeadlineRank, Integer nameRank) {
         JLog.info(String.format("enter findByRank headlineRank=%s secondaryHeadlineRank=%s " +
-                "nameRank=%s", headlineRank, secondaryHeadlineRank, nameRank));
-        return standardLibraryMapper.selectByRank(headlineRank, secondaryHeadlineRank, nameRank);
+                        "thirdHeadlineRank=%s nameRank=%s", headlineRank, secondaryHeadlineRank,
+                thirdHeadlineRank, nameRank));
+        return standardLibraryMapper.selectByRank(headlineRank, secondaryHeadlineRank, thirdHeadlineRank, nameRank);
     }
 
 
@@ -65,16 +66,19 @@ public class StandardService {
      * @return
      */
     public List<StandardLibrary> list(Integer standardRank, Integer headlineRank,
-                                      Integer secondaryHeadlineRank) {
+                                      Integer secondaryHeadlineRank, Integer thirdHeadlineRank) {
         JLog.info(String.format("enter list standardRank=%s headline_rank=%s " +
                 "secondary_headline_rank=%s", standardRank, headlineRank, secondaryHeadlineRank));
         if (standardRank.equals(1)) {
             return standardLibraryMapper.selectListByStandardRankFirst();
         } else if (standardRank.equals(2)) {
             return standardLibraryMapper.selectListByStandardRankSecond(headlineRank);
-        } else {
+        } else if (standardRank.equals(3)) {
             return standardLibraryMapper.selectListByStandardRankThird(headlineRank,
                     secondaryHeadlineRank);
+        } else {
+            return standardLibraryMapper.selectListByStandardRankFour(headlineRank,
+                    secondaryHeadlineRank, thirdHeadlineRank);
         }
     }
 }

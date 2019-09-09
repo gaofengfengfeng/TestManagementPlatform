@@ -53,7 +53,7 @@ public class StandardController {
         StandardLibrary standardLibrary =
                 standardService.findByRank(createStandardData.getHeadline_rank(),
                         createStandardData.getSecondary_headline_rank(),
-                        createStandardData.getName_rank());
+                        createStandardData.getThird_headline_rank(), createStandardData.getName_rank());
 
         if (standardLibrary != null) {
             jResponse.setErr_no(101161801);
@@ -93,9 +93,9 @@ public class StandardController {
         StandardListResponse standardListResponse = new StandardListResponse();
 
         // 判断传来的传来的顺序是否合规
-        if (standardListData.getStandard_rank() < 1 || standardListData.getStandard_rank() > 3) {
+        if (standardListData.getStandard_rank() < 1 || standardListData.getStandard_rank() > 4) {
             standardListResponse.setErr_no(101180042);
-            standardListResponse.setErr_msg("standard_rank should between 1, 3");
+            standardListResponse.setErr_msg("standard_rank should between 1, 4");
             return standardListResponse;
         } else if (standardListData.getStandard_rank().equals(1) &&
                 (!standardListData.getHeadline_rank().equals(0) ||
@@ -123,7 +123,8 @@ public class StandardController {
         List<StandardLibrary> standardLibraryList =
                 standardService.list(standardListData.getStandard_rank(),
                         standardListData.getHeadline_rank(),
-                        standardListData.getSecondary_headline_rank());
+                        standardListData.getSecondary_headline_rank(),
+                        standardListData.getThird_headline_rank());
 
         List<StandardListResponse.StandardListResData> standardListResDataList = new ArrayList<>();
         for (StandardLibrary standardLibrary : standardLibraryList) {
