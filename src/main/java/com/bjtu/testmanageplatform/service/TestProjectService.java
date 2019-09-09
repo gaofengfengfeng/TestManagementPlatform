@@ -3,6 +3,7 @@ package com.bjtu.testmanageplatform.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bjtu.testmanageplatform.InitConfig;
+import com.bjtu.testmanageplatform.beans.testProject.TesterInfo;
 import com.bjtu.testmanageplatform.mapper.ProjectTesterRelationMapper;
 import com.bjtu.testmanageplatform.mapper.StandardLibraryMapper;
 import com.bjtu.testmanageplatform.mapper.TestProjectMapper;
@@ -230,11 +231,11 @@ public class TestProjectService {
                                     (rankAfterSplit, h.getHeadline_rank(),
                                             sh.getSecondary_headline_rank(),
                                             th.getThird_headline_rank());
-                    JSONObject contents=new JSONObject();
-                    for(StandardLibrary name:names){
-                        JSONObject content=new JSONObject();
-                        content.put("content",name.getContent());
-                        contents.put(name.getName(),content);
+                    JSONObject contents = new JSONObject();
+                    for (StandardLibrary name : names) {
+                        JSONObject content = new JSONObject();
+                        content.put("content", name.getContent());
+                        contents.put(name.getName(), content);
                     }
                     thirdHeadline.put(sh.getThird_headline(), contents);
                 }
@@ -245,6 +246,27 @@ public class TestProjectService {
         String template = JSON.toJSONString(firstHeadline);
         System.out.println(template);
         return template;
+    }
+
+    /**
+     * 封装该项目测试人员信息
+     *
+     * @param projectId
+     *
+     * @return
+     */
+    public List<TesterInfo> patchTesterInfo(Long projectId) {
+        List<Long> testIds = projectTesterRelationMapper.selectTesterIdByProjectId(projectId);
+        List<TesterInfo> testerInfos = new ArrayList<>();
+        for (Long testerId : testIds) {
+            TesterInfo testerInfo = new TesterInfo();
+            testerInfo.setTester_id(testerId);
+            User tester = userMapper.selectByUserId(testerId);
+            testerInfo.setName(tester.getName());
+            testerInfo.setDepartment(tester.getDepartment());
+            testerInfos.add(testerInfo);
+        }
+        return testerInfos;
     }
 }
 

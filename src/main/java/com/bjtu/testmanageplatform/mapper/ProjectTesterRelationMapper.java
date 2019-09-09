@@ -23,4 +23,7 @@ public interface ProjectTesterRelationMapper {
 
     @Select("SELECT project_id FROM project_tester_relation WHERE tester_id=#{testId}")
     List<Long> selectProjectIdsByTesterId(Long testId);
+
+    @Select("SELECT tester_id FROM project_tester_relation WHERE project_id=#{projectId}")
+    List<Long> selectTesterIdByProjectId(Long projectId);
 }

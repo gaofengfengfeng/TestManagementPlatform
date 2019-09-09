@@ -248,6 +248,7 @@ public class TestProjectController {
         templateResData.setUnder_test_leader_name(userService.getNameByUserId(testProject.getUnder_test_leader_id()));
         templateResData.setTest_leader_name(userService.getNameByUserId(testProject.getTest_leader_id()));
         templateResData.setContent(content);
+        templateResData.setTesterInfos(testProjectService.patchTesterInfo(templateData.getProject_id()));
         templateResponse.setData(templateResData);
 
         return templateResponse;

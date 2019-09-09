@@ -1,7 +1,10 @@
 package com.bjtu.testmanageplatform.beans;
 
 import com.bjtu.testmanageplatform.beans.base.JResponse;
+import com.bjtu.testmanageplatform.beans.testProject.TesterInfo;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Author: gaofeng
@@ -25,6 +28,7 @@ public class TemplateResponse extends JResponse {
         private String rank;
         private Integer type;
         private String name;
+        private List<TesterInfo> testerInfos;
     }
 
 }
