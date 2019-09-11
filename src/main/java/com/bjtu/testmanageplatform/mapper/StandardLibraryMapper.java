@@ -20,7 +20,7 @@ public interface StandardLibraryMapper {
 
 
     @Insert("INSERT INTO standard_library(standard_id, standard_rank, headline, " +
-            "secondary_headline, third_headline, name, headline_rank, secondary_headline_rank, third_headline_rank, name_rank, rank," +
+            "secondary_headline, third_headline, name, headline_rank, secondary_headline_rank, third_headline_rank, name_rank, s_rank," +
             "content, create_time) VALUES (#{standard_id}, #{standard_rank}, #{headline}, " +
             "#{secondary_headline}, #{third_headline}, #{name}, #{headline_rank}, #{secondary_headline_rank}, " +
             "#{third_headline_rank}, #{name_rank}, #{rank}, #{content}, #{create_time})")
