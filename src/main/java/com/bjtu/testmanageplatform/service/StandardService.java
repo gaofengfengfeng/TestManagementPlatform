@@ -34,7 +34,7 @@ public class StandardService {
      * @return
      */
     public StandardLibrary findByRank(Integer headlineRank, Integer secondaryHeadlineRank,
-                                      Integer thirdHeadlineRank, Integer nameRank) {
+                                      String thirdHeadlineRank, Integer nameRank) {
         JLog.info(String.format("enter findByRank headlineRank=%s secondaryHeadlineRank=%s " +
                         "thirdHeadlineRank=%s nameRank=%s", headlineRank, secondaryHeadlineRank,
                 thirdHeadlineRank, nameRank));
@@ -66,7 +66,7 @@ public class StandardService {
      * @return
      */
     public List<StandardLibrary> list(Integer standardRank, Integer headlineRank,
-                                      Integer secondaryHeadlineRank, Integer thirdHeadlineRank) {
+                                      Integer secondaryHeadlineRank, String thirdHeadlineRank) {
         JLog.info(String.format("enter list standardRank=%s headline_rank=%s " +
                 "secondary_headline_rank=%s", standardRank, headlineRank, secondaryHeadlineRank));
         if (standardRank.equals(1)) {

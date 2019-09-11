@@ -24,7 +24,6 @@ public class StandardListReq extends JRequest {
         private Integer headline_rank;
         @Range(min = 0)
         private Integer secondary_headline_rank;
-        @Range(min = 0)
-        private Integer third_headline_rank;
+        private String third_headline_rank;
     }
 }

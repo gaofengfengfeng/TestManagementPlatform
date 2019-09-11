@@ -20,16 +20,16 @@ public interface StandardLibraryMapper {
 
 
     @Insert("INSERT INTO standard_library(standard_id, standard_rank, headline, " +
-            "secondary_headline, name, headline_rank, secondary_headline_rank, name_rank, project_rank, " +
+            "secondary_headline, third_headline, name, headline_rank, secondary_headline_rank, third_headline_rank, name_rank, rank," +
             "content, create_time) VALUES (#{standard_id}, #{standard_rank}, #{headline}, " +
-            "#{secondary_headline}, #{name}, #{headline_rank}, #{secondary_headline_rank}, " +
-            "#{name_rank}, #{project_rank}, #{content}, #{create_time})")
+            "#{secondary_headline}, #{third_headline}, #{name}, #{headline_rank}, #{secondary_headline_rank}, " +
+            "#{third_headline_rank}, #{name_rank}, #{rank}, #{content}, #{create_time})")
     Integer create(StandardLibrary standardLibrary);
 
     @Select("SELECT * FROM standard_library WHERE headline_rank=#{0} AND " +
             "secondary_headline_rank=#{1} AND third_headline_rank=#{2} AND name_rank=#{3}")
     StandardLibrary selectByRank(Integer headlineRank, Integer secondaryHeadlineRank,
-                                 Integer thirdHeadlineRank, Integer nameRank);
+                                 String thirdHeadlineRank, Integer nameRank);
 
 
     @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND headline_rank=#{0} AND " +
@@ -43,7 +43,7 @@ public interface StandardLibraryMapper {
             "name_rank")
     List<StandardLibrary> selectListByStandardRankFour(Integer headlineRank,
                                                        Integer secondaryHeadlineRank,
-                                                       Integer thirdHeadlineRank);
+                                                       String thirdHeadlineRank);
 
     @Select("SELECT * FROM standard_library WHERE standard_rank=1 ORDER BY headline_rank, " +
             "secondary_headline_rank, name_rank")
@@ -67,8 +67,8 @@ public interface StandardLibraryMapper {
             "</script>"
     })
     List<StandardLibrary> selectThirdHeadlinesByRankAndHeadlineAndSecondaryHeadline(@Param("project_rank") String[] rank,
-                                                                           Integer headlineRank,
-                                                                           Integer secondaryHeadlineRank);
+                                                                                    Integer headlineRank,
+                                                                                    Integer secondaryHeadlineRank);
 
 
     @Select({
@@ -81,9 +81,9 @@ public interface StandardLibraryMapper {
             "</script>"
     })
     List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadlineAndThirdHeadline(@Param("project_rank") String[] rank,
-                                                                           Integer headlineRank,
-                                                                           Integer secondaryHeadlineRank,
-                                                                           Integer thirdHeadlineRank);
+                                                                                           Integer headlineRank,
+                                                                                           Integer secondaryHeadlineRank,
+                                                                                           Integer thirdHeadlineRank);
 
     @Select("SELECT * FROM standard_library WHERE standard_rank=2 AND headline_rank=#{0} ORDER BY" +
             " headline_rank, secondary_headline_rank, name_rank")

@@ -17,7 +17,7 @@ public class StandardLibrary {
     private String name;
     private Integer headline_rank;
     private Integer secondary_headline_rank;
-    private Integer third_headline_rank;
+    private String third_headline_rank;
     private Integer name_rank;
     private String rank;
     private String content;
@@ -32,7 +32,7 @@ public class StandardLibrary {
         name = "";
         headline_rank = 0;
         secondary_headline_rank = 0;
-        third_headline_rank = 0;
+        third_headline_rank = "";
         name_rank = 0;
         rank = "";
         content = "";

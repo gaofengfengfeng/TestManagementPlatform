@@ -21,7 +21,7 @@ public class CreateStandardReq extends JRequest {
         private String secondary_headline;
         private String third_headline;
         private Integer secondary_headline_rank;
-        private Integer third_headline_rank;
+        private String third_headline_rank;
         private String name;
         private Integer name_rank;
         private String rank;
