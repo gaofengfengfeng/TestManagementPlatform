@@ -83,7 +83,7 @@ public interface StandardLibraryMapper {
     List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadlineAndThirdHeadline(@Param("project_rank") String[] rank,
                                                                                            Integer headlineRank,
                                                                                            Integer secondaryHeadlineRank,
-                                                                                           Integer thirdHeadlineRank);
+                                                                                           String thirdHeadlineRank);
 
     @Select("SELECT * FROM standard_library WHERE standard_rank=2 AND headline_rank=#{0} ORDER BY" +
             " headline_rank, secondary_headline_rank, name_rank")
