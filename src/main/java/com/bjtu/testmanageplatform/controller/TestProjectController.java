@@ -70,6 +70,7 @@ public class TestProjectController {
         BeanUtils.copyProperties(createProjectData, testProject);
         testProject.setName(createProjectData.getName().trim());
         testProject.setUnder_test_leader_id(tokenObject.getUserId());
+        testProject.setProject_rank(createProjectData.getRank());
 
         // 调用业务逻辑，创建对象
         Long projectId = testProjectService.create(testProject);
