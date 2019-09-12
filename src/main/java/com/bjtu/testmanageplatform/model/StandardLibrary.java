@@ -18,8 +18,8 @@ public class StandardLibrary {
     private Integer headline_rank;
     private Integer secondary_headline_rank;
     private String third_headline_rank;
-    private Integer name_rank;
-    private String rank;
+    private String name_rank;
+    private String s_rank;
     private String content;
     private Long create_time;
 
@@ -33,8 +33,8 @@ public class StandardLibrary {
         headline_rank = 0;
         secondary_headline_rank = 0;
         third_headline_rank = "";
-        name_rank = 0;
-        rank = "";
+        name_rank = "";
+        s_rank = "";
         content = "";
         create_time = System.currentTimeMillis();
     }

@@ -237,7 +237,7 @@ public class TestProjectService {
                         content.put("content", name.getContent());
                         contents.put(name.getName(), content);
                     }
-                    thirdHeadline.put(sh.getThird_headline(), contents);
+                    thirdHeadline.put(th.getThird_headline(), contents);
                 }
                 secondHeadline.put(sh.getSecondary_headline(), thirdHeadline);
             }

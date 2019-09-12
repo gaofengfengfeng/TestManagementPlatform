@@ -23,7 +23,7 @@ public interface StandardLibraryMapper {
             "secondary_headline, third_headline, name, headline_rank, secondary_headline_rank, third_headline_rank, name_rank, s_rank," +
             "content, create_time) VALUES (#{standard_id}, #{standard_rank}, #{headline}, " +
             "#{secondary_headline}, #{third_headline}, #{name}, #{headline_rank}, #{secondary_headline_rank}, " +
-            "#{third_headline_rank}, #{name_rank}, #{rank}, #{content}, #{create_time})")
+            "#{third_headline_rank}, #{name_rank}, #{s_rank}, #{content}, #{create_time})")
     Integer create(StandardLibrary standardLibrary);
 
     @Select("SELECT * FROM standard_library WHERE headline_rank=#{0} AND " +
@@ -59,28 +59,28 @@ public interface StandardLibraryMapper {
 
     @Select({
             "<script>",
-            "SELECT * FROM standard_library where standard_rank=3 AND project_rank in",
-            "<foreach collection='project_rank' item='item' open='(' separator=',' close=')'>",
+            "SELECT * FROM standard_library where standard_rank=3 AND s_rank in",
+            "<foreach collection='s_rank' item='item' open='(' separator=',' close=')'>",
             "#{item}",
             "</foreach>",
             " AND headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY third_headline_rank",
             "</script>"
     })
-    List<StandardLibrary> selectThirdHeadlinesByRankAndHeadlineAndSecondaryHeadline(@Param("project_rank") String[] rank,
+    List<StandardLibrary> selectThirdHeadlinesByRankAndHeadlineAndSecondaryHeadline(@Param("s_rank") String[] rank,
                                                                                     Integer headlineRank,
                                                                                     Integer secondaryHeadlineRank);
 
 
     @Select({
             "<script>",
-            "SELECT * FROM standard_library where standard_rank=3 AND project_rank in",
-            "<foreach collection='project_rank' item='item' open='(' separator=',' close=')'>",
+            "SELECT * FROM standard_library where standard_rank=4 AND s_rank in",
+            "<foreach collection='s_rank' item='item' open='(' separator=',' close=')'>",
             "#{item}",
             "</foreach>",
-            " AND headline_rank=#{1} AND secondary_headline_rank=#{2} AND third__headline_rank=#{3} ORDER BY name_rank",
+            " AND headline_rank=#{1} AND secondary_headline_rank=#{2} AND third_headline_rank=#{3} ORDER BY name_rank",
             "</script>"
     })
-    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadlineAndThirdHeadline(@Param("project_rank") String[] rank,
+    List<StandardLibrary> selectNamesByRankAndHeadlineAndSecondaryHeadlineAndThirdHeadline(@Param("s_rank") String[] rank,
                                                                                            Integer headlineRank,
                                                                                            Integer secondaryHeadlineRank,
                                                                                            String thirdHeadlineRank);

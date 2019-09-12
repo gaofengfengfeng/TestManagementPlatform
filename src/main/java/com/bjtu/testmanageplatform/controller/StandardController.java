@@ -64,10 +64,6 @@ public class StandardController {
         // 执行插入操作
         standardLibrary = new StandardLibrary();
         BeanUtils.copyProperties(createStandardData, standardLibrary);
-        standardLibrary.setHeadline(createStandardData.getHeadline());
-        standardLibrary.setSecondary_headline(createStandardData.getSecondary_headline());
-        standardLibrary.setThird_headline(createStandardData.getThird_headline());
-        standardLibrary.setContent(createStandardData.getContent());
         Boolean result = standardService.create(standardLibrary);
 
         if (!result) {
