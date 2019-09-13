@@ -34,7 +34,7 @@ public class StandardService {
      * @return
      */
     public StandardLibrary findByRank(Integer headlineRank, Integer secondaryHeadlineRank,
-                                      String thirdHeadlineRank, Integer nameRank) {
+                                      String thirdHeadlineRank, String nameRank) {
         JLog.info(String.format("enter findByRank headlineRank=%s secondaryHeadlineRank=%s " +
                         "thirdHeadlineRank=%s nameRank=%s", headlineRank, secondaryHeadlineRank,
                 thirdHeadlineRank, nameRank));

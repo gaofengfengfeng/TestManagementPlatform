@@ -29,7 +29,7 @@ public interface StandardLibraryMapper {
     @Select("SELECT * FROM standard_library WHERE headline_rank=#{0} AND " +
             "secondary_headline_rank=#{1} AND third_headline_rank=#{2} AND name_rank=#{3}")
     StandardLibrary selectByRank(Integer headlineRank, Integer secondaryHeadlineRank,
-                                 String thirdHeadlineRank, Integer nameRank);
+                                 String thirdHeadlineRank, String nameRank);
 
 
     @Select("SELECT * FROM standard_library WHERE standard_rank=3 AND headline_rank=#{0} AND " +
