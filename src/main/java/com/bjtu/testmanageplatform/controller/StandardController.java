@@ -64,6 +64,7 @@ public class StandardController {
         // 执行插入操作
         standardLibrary = new StandardLibrary();
         BeanUtils.copyProperties(createStandardData, standardLibrary);
+        standardLibrary.setS_rank(createStandardData.getRank());
         Boolean result = standardService.create(standardLibrary);
 
         if (!result) {
