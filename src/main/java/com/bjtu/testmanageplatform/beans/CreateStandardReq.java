@@ -15,16 +15,16 @@ public class CreateStandardReq extends JRequest {
 
     @Data
     public static class CreateStandardData {
-        private Integer standard_rank;
-        private String headline;
-        private Integer headline_rank;
-        private String secondary_headline;
-        private String third_headline;
-        private Integer secondary_headline_rank;
-        private String third_headline_rank;
-        private String name;
-        private String name_rank;
-        private String rank;
-        private String content;
+        private Integer standard_rank = 0;
+        private String headline = "";
+        private Integer headline_rank = 0;
+        private String secondary_headline = "";
+        private String third_headline = "";
+        private Integer secondary_headline_rank = 0;
+        private String third_headline_rank = "";
+        private String name = "";
+        private String name_rank = "";
+        private String rank = "";
+        private String content = "";
     }
 }
