@@ -63,12 +63,12 @@ public interface StandardLibraryMapper {
             "<foreach collection='s_rank' item='item' open='(' separator=',' close=')'>",
             "#{item}",
             "</foreach>",
-            " AND headline_rank=#{1} AND secondary_headline_rank=#{2} ORDER BY third_headline_rank",
+            " AND headline_rank=#{headlineRank} AND secondary_headline_rank=#{secondaryHeadlineRank} ORDER BY third_headline_rank",
             "</script>"
     })
     List<StandardLibrary> selectThirdHeadlinesByRankAndHeadlineAndSecondaryHeadline(@Param("s_rank") String[] rank,
-                                                                                    Integer headlineRank,
-                                                                                    Integer secondaryHeadlineRank);
+                                                                                    @Param("headlineRank") Integer headlineRank,
+                                                                                    @Param("secondaryHeadlineRank") Integer secondaryHeadlineRank);
 
 
     @Select({

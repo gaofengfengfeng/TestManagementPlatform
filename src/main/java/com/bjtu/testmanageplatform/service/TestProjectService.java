@@ -233,9 +233,9 @@ public class TestProjectService {
                                             th.getThird_headline_rank());
                     JSONObject contents = new JSONObject();
                     for (StandardLibrary name : names) {
-                        JSONObject content = new JSONObject();
-                        content.put("content", name.getContent());
-                        contents.put(name.getName(), content);
+                        // JSONObject content = new JSONObject();
+                        // content.put("content", name.getContent());
+                        contents.put(name.getName(), name.getContent());
                     }
                     thirdHeadline.put(th.getThird_headline(), contents);
                 }
