@@ -4,8 +4,10 @@ import com.bjtu.testmanageplatform.beans.*;
 import com.bjtu.testmanageplatform.beans.base.JRequest;
 import com.bjtu.testmanageplatform.beans.base.JResponse;
 import com.bjtu.testmanageplatform.beans.base.TokenObject;
+import com.bjtu.testmanageplatform.model.OperationRecord;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
+import com.bjtu.testmanageplatform.service.OperationRecordService;
 import com.bjtu.testmanageplatform.service.TestProjectService;
 import com.bjtu.testmanageplatform.service.UserService;
 import com.bjtu.testmanageplatform.util.Generator;
@@ -29,6 +31,9 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1/project")
 public class TestProjectController {
+
+    @Autowired
+    private OperationRecordService operationRecordService;
 
     private TestProjectService testProjectService;
     private UserService userService;
@@ -253,5 +258,26 @@ public class TestProjectController {
         templateResponse.setData(templateResData);
 
         return templateResponse;
+    }
+
+    @RequestMapping(value = "/history")
+    public OperationHistoryResponse history(HttpServletRequest request,
+                                            @Valid @RequestBody TemplateReq templateReq) {
+        TemplateReq.TemplateData templateData = templateReq.getData();
+        JLog.info(String.format("history projectId=%s", templateData.getProject_id()));
+        OperationHistoryResponse operationHistoryResponse = new OperationHistoryResponse();
+
+        // 判断该项目是否存在
+        TestProject testProject =
+                testProjectService.selectByProjectId(templateData.getProject_id());
+        if (testProject == null) {
+            operationHistoryResponse.setErr_no(101230121);
+            operationHistoryResponse.setErr_msg("unknown test project");
+            return operationHistoryResponse;
+        }
+
+        List<OperationRecord> operationRecords = operationRecordService.history(templateData.getProject_id());
+        operationHistoryResponse.setData(operationRecords);
+        return operationHistoryResponse;
     }
 }

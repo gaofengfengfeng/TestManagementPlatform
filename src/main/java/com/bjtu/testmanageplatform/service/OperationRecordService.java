@@ -76,4 +76,8 @@ public class OperationRecordService {
         operationRecord.setOperator(userService.getNameByUserId(operatorId));
         operationRecordMapper.insert(operationRecord);
     }
+
+    public List<OperationRecord> history(Long projectId) {
+        return operationRecordMapper.selectByProjectId(projectId);
+    }
 }
