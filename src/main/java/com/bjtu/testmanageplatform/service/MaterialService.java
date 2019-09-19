@@ -4,6 +4,7 @@ import com.bjtu.testmanageplatform.InitConfig;
 import com.bjtu.testmanageplatform.beans.MaterialListResponse;
 import com.bjtu.testmanageplatform.mapper.ProjectMaterialMapper;
 import com.bjtu.testmanageplatform.mapper.UserMapper;
+import com.bjtu.testmanageplatform.model.OperationRecord;
 import com.bjtu.testmanageplatform.model.ProjectMaterial;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
@@ -19,6 +20,9 @@ import java.util.List;
 
 @Service
 public class MaterialService {
+
+    @Autowired
+    private OperationRecordService operationRecordService;
 
     private ProjectMaterialMapper projectMaterialMapper;
     private UserMapper userMapper;
@@ -46,12 +50,14 @@ public class MaterialService {
         return projectMaterialMapper.updateMaterial(material_id, audit_status, discussion);
     }
 
-    public int upload(ProjectMaterial projectMaterial) {
+    public int upload(ProjectMaterial projectMaterial, Long projectId, Long operatorId, Integer type) {
         JLog.info(String.format("enter upload material projectid=%s type=%s"
                 , projectMaterial.getProject_id(), projectMaterial.getType()));
 
         projectMaterial.setMaterial_id(Generator.generateLongId());
         Integer result = projectMaterialMapper.insert(projectMaterial);
+
+        operationRecordService.uploadMaterial(projectId, operatorId, type);
         return result == 1 ? 1 : 0;
     }
 
@@ -107,7 +113,7 @@ public class MaterialService {
             return true;
     }
 
-    public Boolean audit(Long material_id, Integer type, Integer audit_status, String discussion) {
+    public Boolean audit(Long material_id, Integer type, Integer audit_status, String discussion, Long userId) {
         Boolean result = false;
         Integer resultA;
         Long project_id = projectMaterialMapper.selectPidByMid(material_id);
@@ -116,29 +122,41 @@ public class MaterialService {
         String testProjectName = testProject.getName();
         JLog.info(String.format("change projectid=%s by materialid=%s", testProject.getProject_id(), material_id));
 
+        Integer currentAuditStatus = 0;
         if (type == ProjectMaterial.Type.GRADE_AUDIT_MATERIAL) {
-            if (audit_status == ProjectMaterial.Audit.NOPASS)
+            if (audit_status == ProjectMaterial.Audit.NOPASS) {
+                currentAuditStatus = TestProject.Status.GRADE_MATERIAL_AUDIT_FAILED;
                 result = testProjectService.changeProjectStatus(testProject, TestProject.Status.GRADE_MATERIAL_AUDIT_FAILED);
-            else
+            } else {
+                currentAuditStatus = TestProject.Status.GRADE_MATERIAL_AUDIT_PASSED;
                 result = testProjectService.changeProjectStatus(testProject, TestProject.Status.GRADE_MATERIAL_AUDIT_PASSED);
+            }
         } else if (type == ProjectMaterial.Type.FILING_MATERIAL) {
-            if (audit_status == ProjectMaterial.Audit.NOPASS)
+            if (audit_status == ProjectMaterial.Audit.NOPASS) {
+                currentAuditStatus = TestProject.Status.FILING_FAILED;
                 result = testProjectService.changeProjectStatus(testProject, TestProject.Status.FILING_FAILED);
-            else
+            } else {
+                currentAuditStatus = TestProject.Status.FILING_PASSES;
                 result = testProjectService.changeProjectStatus(testProject, TestProject.Status.FILING_PASSES);
+            }
         } else if (type == ProjectMaterial.Type.ASSESSMENT_REPORT) {
-            if (audit_status == ProjectMaterial.Audit.NOPASS)
+            if (audit_status == ProjectMaterial.Audit.NOPASS) {
+                currentAuditStatus = TestProject.Status.REJECT_FOR_RECTIFICATION;
                 result = testProjectService.changeProjectStatus(testProject, TestProject.Status.REJECT_FOR_RECTIFICATION);
-            else
+            } else {
+                currentAuditStatus = TestProject.Status.TEST_PASSED;
                 result = testProjectService.changeProjectStatus(testProject, TestProject.Status.TEST_PASSED);
+            }
         }
 
+        operationRecordService.materialAudit(project_id, userId, currentAuditStatus);
         if (result == true) {
             resultA = updateMaterialAudit(material_id, audit_status, discussion);
             sendMessage(underTestLeaderId, type, audit_status, testProjectName);
             return (resultA == 1 ? true : false);
-        } else
+        } else {
             return false;
+        }
 
     }
 

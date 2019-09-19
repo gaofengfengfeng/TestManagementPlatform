@@ -166,7 +166,7 @@ public class TestProjectController {
 
         // 创建测试项目和测试人员之间的关系表
         Boolean result = testProjectService.assignTester(assignTesterData.getProject_id(),
-                assignTesterData.getTesters());
+                assignTesterData.getTesters(), testProject.getTest_leader_id());
 
         if (!result) {
             jResponse.setErr_no(101192124);

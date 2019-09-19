@@ -59,7 +59,7 @@ public class MaterialController {
         projectMaterial.setVersion(newVersion);
         projectMaterial.setCommitter_id(tokenObject.getUserId());
 
-        int result = materialService.upload(projectMaterial);
+        int result = materialService.upload(projectMaterial, materialUploadData.getProject_id(), tokenObject.getUserId(), materialUploadData.getType());
         if(result == 0){
             jResponse.setErr_no(101400001);
             jResponse.setErr_msg("db error");
@@ -164,7 +164,7 @@ public class MaterialController {
         }
 
         if(!materialService.audit(materialAduitData.getMaterial_id(),projectMaterial.getType()
-                ,materialAduitData.getResult(),materialAduitData.getDiscussion())){
+                ,materialAduitData.getResult(),materialAduitData.getDiscussion(), tokenObject.getUserId())){
             jResponse.setErr_no(101400008);
             jResponse.setErr_msg("db error or test status can not change");
             JLog.error(String.format("user save failed userId=%s phone=%s errNo=101400008",

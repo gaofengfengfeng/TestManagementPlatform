@@ -31,6 +31,9 @@ import java.util.List;
 @Service
 public class TestProjectService {
 
+    @Autowired
+    private OperationRecordService operationRecordService;
+
     private TestProjectMapper testProjectMapper;
     private UserMapper userMapper;
     private StateMachineService stateMachineService;
@@ -108,6 +111,8 @@ public class TestProjectService {
         // TODO: project_location_code保留字段，后续可以后端解析 省市区得到code，也可以前端传递，目前默认都设置成0
         testProject.setProject_location_code(0);
         Integer result = testProjectMapper.insert(testProject);
+
+        operationRecordService.createProject(testProject.getProject_id(), testProject.getUnder_test_leader_id());
         return result == 1 ? testProject.getProject_id() : 0L;
     }
 
@@ -150,7 +155,7 @@ public class TestProjectService {
      * @return
      */
     @Transactional
-    public Boolean assignTester(Long projectId, List<Long> testIds) {
+    public Boolean assignTester(Long projectId, List<Long> testIds, Long testLeaderId) {
         JLog.info(String.format("assignTester projectId=%s", projectId));
 
         for (Long testerId : testIds) {
@@ -165,6 +170,7 @@ public class TestProjectService {
                 return false;
             }
         }
+        operationRecordService.assignTester(projectId, testLeaderId, testIds);
         return true;
     }
 
