@@ -88,4 +88,7 @@ public interface StandardLibraryMapper {
     @Select("SELECT * FROM standard_library WHERE standard_rank=2 AND headline_rank=#{0} ORDER BY" +
             " headline_rank, secondary_headline_rank, name_rank")
     List<StandardLibrary> selectListByStandardRankSecond(Integer headlineRank);
+    
+    @Select("select count(id) from standard_library where standard_rank=4")
+    Integer queryStandardNum();
 }

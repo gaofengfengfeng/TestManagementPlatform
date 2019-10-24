@@ -47,7 +47,8 @@ public class WebLogicAspect {
 
         if (request.getRequestURI().equals("/v1/file/upload") ||
                 request.getRequestURI().equals("/v1/user/createAdministrator") ||
-                request.getRequestURI().equals("/v1/user/login")) {
+                request.getRequestURI().equals("/v1/user/login") ||
+                request.getRequestURI().equals("/v1/stats/overview")) {
             return proceedingJoinPoint.proceed();
         }
 
@@ -81,7 +82,8 @@ public class WebLogicAspect {
         } finally {
             try {
                 jedis.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
         if (!jRequest.getToken().equals(tokenInRedis)) {

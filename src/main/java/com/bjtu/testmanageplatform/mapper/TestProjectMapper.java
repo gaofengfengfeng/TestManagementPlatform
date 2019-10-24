@@ -1,5 +1,7 @@
 package com.bjtu.testmanageplatform.mapper;
 
+import com.bjtu.testmanageplatform.beans.statistic.ProjectRankRelation;
+import com.bjtu.testmanageplatform.beans.statistic.ProjectTypeRelation;
 import com.bjtu.testmanageplatform.model.TestProject;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -39,4 +41,16 @@ public interface TestProjectMapper {
 
     @Select("SELECT * FROM test_project WHERE under_test_leader_id=#{underTestLeaderId}")
     List<TestProject> selectByUnderTestLeaderId(Long underTestLeaderId);
+
+    @Select("select count(id) from test_project")
+    Integer queryProjectNum();
+
+    @Select("select count(id) from test_project where create_time>#{0} and create_time<#{1}")
+    Integer queryProjectNumByInterval(Long startTime, Long endTime);
+
+    @Select("select type, count(id) as count from test_project group by type")
+    List<ProjectTypeRelation> queryProjectTypeRelation();
+
+    @Select("select project_rank as project_rank, count(id) as count from test_project group by project_rank")
+    List<ProjectRankRelation> queryProjectRankRelation();
 }

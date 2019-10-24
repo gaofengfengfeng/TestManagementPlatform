@@ -57,4 +57,7 @@ public interface UserMapper {
             @Result(property = "createTime", column = "create_time")
     })
     User selectByUserId(Long userId);
+
+    @Select("select count(id) from user")
+    Integer queryUserNum();
 }
