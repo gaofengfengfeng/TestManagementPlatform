@@ -13,7 +13,7 @@ import java.util.List;
 public interface ProjectMaterialMapper {
 
     @Select("SELECT count(*) FROM project_material WHERE project_id=#{0} and type=#{1}")
-    Integer selectByIdType(Long projectId , Integer type);
+    Integer selectByIdType(Long projectId, Integer type);
 
     @Insert("INSERT INTO project_material(material_id, project_id, committer_id, type, " +
             "status, audit_status, version, remark, discussion, file_url, content, create_time) VALUES" +
@@ -21,17 +21,17 @@ public interface ProjectMaterialMapper {
             "#{audit_status}, #{version}, #{remark}, #{discussion}, #{file_url}, #{content}, #{create_time})")
     Integer insert(ProjectMaterial projectMaterial);
 
-    @Select("SELECT * FROM project_material where project_id=#{projectId}")
+    @Select("SELECT * FROM project_material where project_id=#{projectId} and type!=4")
     List<ProjectMaterial> selectByProjectId(Long projectId);
 
     @Update("<script>UPDATE project_material " +
             "<set> " +
-            "<if test='remark!= null'>remark=#{remark},</if>"+
-            "<if test='file_url!= null'>file_url=#{file_url},</if>"+
-            "<if test='content!= null'>content=#{content}</if>"+
+            "<if test='remark!= null'>remark=#{remark},</if>" +
+            "<if test='file_url!= null'>file_url=#{file_url},</if>" +
+            "<if test='content!= null'>content=#{content}</if>" +
             "</set> " +
             "WHERE material_id=#{0}</script>")
-    Integer update(Long materialId , @Param("remark") String remark,@Param("file_url") String file_url ,@Param("content") String content);
+    Integer update(Long materialId, @Param("remark") String remark, @Param("file_url") String file_url, @Param("content") String content);
 
     @Select("SELECT project_id FROM project_material where material_id=#{materialId}")
     Long selectPidByMid(Long materialId);
