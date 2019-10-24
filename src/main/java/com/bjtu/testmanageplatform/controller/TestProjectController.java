@@ -7,6 +7,7 @@ import com.bjtu.testmanageplatform.beans.base.TokenObject;
 import com.bjtu.testmanageplatform.model.OperationRecord;
 import com.bjtu.testmanageplatform.model.TestProject;
 import com.bjtu.testmanageplatform.model.User;
+import com.bjtu.testmanageplatform.service.MaterialService;
 import com.bjtu.testmanageplatform.service.OperationRecordService;
 import com.bjtu.testmanageplatform.service.TestProjectService;
 import com.bjtu.testmanageplatform.service.UserService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -35,6 +37,9 @@ public class TestProjectController {
     @Autowired
     private OperationRecordService operationRecordService;
 
+    @Resource
+    private MaterialService materialService;
+
     private TestProjectService testProjectService;
     private UserService userService;
 
@@ -51,7 +56,6 @@ public class TestProjectController {
      *
      * @param request
      * @param createProjectReq
-     *
      * @return
      */
     @RequestMapping(value = "/create")
@@ -98,7 +102,6 @@ public class TestProjectController {
      *
      * @param request
      * @param projectStatusReq
-     *
      * @return
      */
     @RequestMapping(value = "/updateStatus")
@@ -141,7 +144,6 @@ public class TestProjectController {
      *
      * @param request
      * @param assignTesterReq
-     *
      * @return
      */
     @RequestMapping(value = "/assignTester")
@@ -186,7 +188,6 @@ public class TestProjectController {
      *
      * @param request
      * @param jRequest
-     *
      * @return
      */
     @RequestMapping(value = "/list")
@@ -228,7 +229,6 @@ public class TestProjectController {
      *
      * @param request
      * @param templateReq
-     *
      * @return
      */
     @RequestMapping(value = "/template")
@@ -255,6 +255,8 @@ public class TestProjectController {
         templateResData.setTest_leader_name(userService.getNameByUserId(testProject.getTest_leader_id()));
         templateResData.setContent(content);
         templateResData.setTesterInfos(testProjectService.patchTesterInfo(templateData.getProject_id()));
+        // 查询该项目是否已经生成过测试报告，查询masterial表
+        templateResData.setReport(materialService.getLatestReport(templateData.getProject_id()));
         templateResponse.setData(templateResData);
 
         return templateResponse;

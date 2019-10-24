@@ -29,6 +29,7 @@ public class TemplateResponse extends JResponse {
         private Integer type;
         private String name;
         private List<TesterInfo> testerInfos;
+        private String report;
     }
 
 }

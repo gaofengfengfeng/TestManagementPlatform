@@ -11,9 +11,9 @@ import com.bjtu.testmanageplatform.model.User;
 import com.bjtu.testmanageplatform.util.Generator;
 import com.bjtu.testmanageplatform.util.JLog;
 import com.bjtu.testmanageplatform.util.SmsUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,5 +184,19 @@ public class MaterialService {
                 SmsUtil.singleSendMsg(userPhone, InitConfig.NOTIFY_UNDER_TEST_LEADER_PASS_ID, testProjectName, assessmentReport);
         }
 
+    }
+
+    /**
+     * 获取最新的测试报告
+     *
+     * @param projectId
+     * @return
+     */
+    public String getLatestReport(Long projectId) {
+        String latestReport = projectMaterialMapper.queryLatestReport(projectId);
+        if (StringUtils.isEmpty(latestReport)) {
+            return null;
+        }
+        return latestReport;
     }
 }
