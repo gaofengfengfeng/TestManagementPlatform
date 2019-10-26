@@ -51,6 +51,6 @@ public interface ProjectMaterialMapper {
     @Update("UPDATE project_material SET audit_status=#{1} where material_id=#{0}")
     Integer updateMaterialStatus(Long materialId, Integer auditStatus);
 
-    @Select("SELECT content FROM project_material where project_id={0} and type=4 order by create_time desc limit 1")
+    @Select("SELECT content FROM project_material where project_id=#{0} and type=4 order by create_time desc limit 1")
     String queryLatestReport(Long projectId);
 }
