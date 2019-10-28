@@ -254,6 +254,7 @@ public class TestProjectController {
         templateResData.setUnder_test_leader_name(userService.getNameByUserId(testProject.getUnder_test_leader_id()));
         templateResData.setTest_leader_name(userService.getNameByUserId(testProject.getTest_leader_id()));
         templateResData.setContent(content);
+        templateResData.setRank(testProject.getProject_rank());
         templateResData.setTesterInfos(testProjectService.patchTesterInfo(templateData.getProject_id()));
         // 查询该项目是否已经生成过测试报告，查询masterial表
         templateResData.setReport(materialService.getLatestReport(templateData.getProject_id()));
